@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PASRA - Panel Admin (Dashboard & Data)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-primary: #1e8449;
+            --color-secondary: #28a846;
+            --color-text: #34495e;
+            --color-background: #f4f6f9;
+            --color-card-bg: #ffffff;
+            --color-border: #e0e0e0;
+            --color-urgent-warning: #dc3545;
+            --header-height: 60px;
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding-top: var(--header-height);
+            background-color: var(--color-background);
+            color: var(--color-text);
+        }
+        
+        .fixed-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: var(--header-height);
+            background-color: var(--color-primary);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+        }
+        .nav-container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: flex-start;
+            overflow-x: auto;
+            white-space: nowrap;
+            padding: 0 20px;
+        }
+        .nav-item {
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            font-weight: 600;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border-bottom: 3px solid transparent;
+            margin-right: 5px;
+        }
+        .nav-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-bottom-color: white;
+        }
+        .nav-item.active {
+            background-color: var(--color-secondary);
+            border-bottom-color: #ffc107;
+            color: #ffc107;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 20px auto;
+            padding: 30px 20px;
+        }
+        h1 {
+            color: var(--color-text);
+            font-size: 1.8em;
+            margin-bottom: 15px;
+        }
+        #total-submissions, #current-submissions {
+            color: var(--color-primary);
+            font-weight: 700;
+        }
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .controls p {
+            margin: 5px 0;
+        }
+
+        #dashboard-container {
+            margin-top: 20px;
+        }
+        .stat-card {
+            background-color: var(--color-card-bg);
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .stat-card h3, .stat-card h4 {
+            margin: 0 0 15px 0;
+            font-size: 1.1em;
+            font-weight: 700;
+            color: #555;
+            text-transform: uppercase;
+        }
+        .stat-card.total {
+            border-bottom: 5px solid var(--color-primary);
+        }
+        .stat-card.reviewed-stat {
+            border-bottom: 5px solid var(--color-secondary);
+        }
+        .stat-card.not-reviewed-stat {
+            border-bottom: 5px solid var(--color-urgent-warning);
+        }
+        .stat-number {
+            font-size: 3em;
+            font-weight: 900;
+            color: var(--color-primary);
+            line-height: 1;
+        }
+        .stat-card.reviewed-stat .stat-number {
+            color: var(--color-secondary);
+        }
+        .stat-card.not-reviewed-stat .stat-number {
+            color: var(--color-urgent-warning);
+        }
+        .stat-number-small {
+            font-size: 2em;
+            font-weight: 900;
+            color: var(--color-primary);
+            line-height: 1;
+            margin-bottom: 5px;
+        }
+        .stat-sub {
+            font-size: 0.85em;
+            color: #777;
+            display: block;
+        }
+
+        .catalog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+        .catalog-item {
+            background-color: var(--color-card-bg);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-left: 5px solid var(--color-secondary);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .catalog-item h4 {
+            color: var(--color-primary);
+            margin: 0 0 10px 0;
+            font-size: 1.2em;
+            border-bottom: 1px dashed var(--color-border);
+            padding-bottom: 8px;
+        }
+        .catalog-item p {
+            margin: 5px 0;
+            font-size: 0.95em;
+        }
+        .catalog-item strong {
+            font-weight: 600;
+        }
+        .download-group {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--color-border);
+            margin-bottom: 10px;
+        }
+        
+        #list-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 0.85em;
+        }
+        #list-table th, #list-table td {
+            border: 1px solid var(--color-border);
+            padding: 8px;
+            text-align: left;
+            vertical-align: top;
+        }
+        #list-table th {
+            background-color: var(--color-primary);
+            color: white;
+            font-weight: 700;
+            position: sticky;
+            top: 60px; 
+            z-index: 500;
+        }
+        #list-table td:last-child {
+            min-width: 150px; 
+        }
+
+        .download-btn, #export-excel-btn {
+            background-color: var(--color-secondary);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 0.85em;
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 10px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .download-btn.secondary {
+             background-color: #5a6268; 
+             padding: 6px 10px;
+             font-size: 0.8em;
+        }
+        .download-btn:hover, #export-excel-btn:hover {
+            background-color: #1a7140;
+        }
+        .download-btn.secondary:hover {
+            background-color: #44494e;
+        }
+        
+        .review-btn {
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            margin: 5px auto 0 auto;
+            font-size: 0.85em;
+            display: block; 
+            width: 100%;
+            text-align: center;
+        }
+        .review-btn.not-reviewed {
+            background-color: var(--color-urgent-warning); 
+            color: white;
+        }
+        .review-btn.reviewed {
+            background-color: var(--color-secondary); 
+            color: white;
+        }
+        .review-btn.not-reviewed:hover {
+            background-color: #c82333;
+        }
+        .review-btn.reviewed:hover {
+            background-color: #1a7140;
+        }
+
+        .no-data {
+            text-align: center;
+            font-style: italic;
+            padding: 20px;
+            grid-column: 1 / -1;
+            background-color: #fff3cd;
+            color: #856404;
+            border-radius: 5px;
+        }
+        .timestamp {
+            font-size: 0.8em;
+            color: #777;
+            margin-top: 10px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="fixed-header">
+        <nav class="nav-container" id="category-nav"></nav>
+    </div>
+
+    <div class="container" id="admin-panel">
+        <h1 id="catalog-title">Data Submisi Lomba</h1>
+
+        <div class="controls">
+             <button id="export-excel-btn" onclick="exportCurrentTable()" style="display:none;">Ekspor Data ke Excel</button>
+            <p>Total Submisi Ditemukan: <strong id="current-submissions">0</strong> / Total Seluruh Submisi: <strong id="total-submissions">0</strong></p>
+        </div>
+
+        <div class="catalog-grid" id="dashboard-container" style="display:none;">
+        </div>
+
+        <div class="catalog-grid" id="catalog-display">
+            <div class="no-data">Memuat data submisi...</div>
+        </div>
+        
+        <div id="table-view-container" style="display: none;">
+            <div style="overflow-x: auto;">
+                <table id="list-table">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Waktu Submisi</th>
+                            <th>Nama</th>
+                            <th>Tingkat</th>
+                            <th>Alamat</th>
+                            <th>No. WA</th>
+                            <th>KTS/ID Card</th>
+                            <th>Bukti Bayar</th>
+                            <th>Status Tinjauan</th> 
+                        </tr>
+                    </thead>
+                    <tbody id="list-table-body">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyB-kiGFrRI3GMfW7DT2Dt7DmpDBsFNkE", 
+            databaseURL: "https://mysite-98643-default-rtdb.firebaseio.com",
+        };
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const rtdbRefSubmissions = database.ref('submissions_pasra');
+        
+        let submissionsData = {};
+        let currentCategory = 'BERANDA'; 
+        let currentFilteredData = []; 
+        
+        const CATEGORIES = {
+            'BERANDA': 'Beranda', 
+            'PUISI': 'Puisi',
+            'ESAI': 'Esai',
+            'CERPEN': 'Cerpen',
+            'VIDIOGRAFI': 'Vidiografi',
+            'BACAPUISI': 'Baca Puisi',
+            'DAI_MADURA': 'Da\'i Bahasa Madura'
+        };
+
+        const LIST_VIEW_CATEGORIES = ['BACAPUISI', 'DAI_MADURA'];
+
+        function toggleReviewStatus(submissionId, currentStatus) {
+            const newStatus = !currentStatus;
+            const ref = rtdbRefSubmissions.child(submissionId);
+            
+            ref.update({
+                reviewed: newStatus
+            })
+            .then(() => {
+                if(submissionsData[submissionId]) {
+                    submissionsData[submissionId].reviewed = newStatus;
+                }
+                showCategory(currentCategory); 
+            })
+            .catch(error => {
+                alert("Gagal memperbarui status di database: " + error.message);
+                console.error("Firebase update failed:", error);
+            });
+        }
+        
+        function downloadFile(base64Data, filename) {
+            if (!base64Data) {
+                alert('File tidak tersedia.');
+                return;
+            }
+            
+            try {
+                const parts = base64Data.split(';');
+                if (parts.length < 2) { throw new Error('Format Base64 tidak valid.'); }
+                
+                const mimeType = parts[0].split(':')[1];
+                const base64Content = parts[1].split(',')[1];
+                
+                const byteCharacters = atob(base64Content);
+                const byteArrays = [];
+                
+                for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+                    const slice = byteCharacters.slice(offset, offset + 512);
+                    const byteNumbers = new Array(slice.length);
+                    for (let i = 0; i < slice.length; i++) {
+                        byteNumbers[i] = slice.charCodeAt(i);
+                    }
+                    const byteArray = new Uint8Array(byteNumbers);
+                    byteArrays.push(byteArray);
+                }
+                
+                const blob = new Blob(byteArrays, { type: mimeType });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename || 'file_unduhan';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+            } catch(e) {
+                 alert('Gagal mengunduh file. Kemungkinan data Base64 rusak atau tidak lengkap.');
+                 console.error("Download Error:", e);
+            }
+        }
+
+        function formatTimestamp(timestamp, type = 'full') {
+            const date = new Date(timestamp);
+            if (type === 'simple') {
+                 return date.toLocaleDateString('id-ID');
+            }
+            return date.toLocaleString('id-ID', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+        
+        function fetchSubmissions() {
+            rtdbRefSubmissions.on('value', (snapshot) => {
+                const data = snapshot.val();
+                submissionsData = {};
+                if (data) {
+                    Object.keys(data).forEach(key => {
+                        submissionsData[key] = data[key];
+                    });
+                }
+                
+                document.getElementById('total-submissions').textContent = Object.keys(submissionsData).length;
+                initCatalog();
+            }, (error) => {
+                document.getElementById('catalog-display').innerHTML = '<div class="no-data" style="background-color: #f8d7da; color: #721c24;">Gagal memuat data: ' + error.message + '</div>';
+            });
+        }
+
+        function initCatalog() {
+            createCategoryNav();
+            showCategory(currentCategory);
+        }
+
+        function createCategoryNav() {
+            const navContainer = document.getElementById('category-nav');
+            navContainer.innerHTML = '';
+            
+            Object.keys(CATEGORIES).forEach(categoryKey => {
+                const link = document.createElement('a');
+                link.className = 'nav-item';
+                link.textContent = CATEGORIES[categoryKey].toUpperCase();
+                link.setAttribute('data-category', categoryKey);
+                link.onclick = () => showCategory(categoryKey);
+                navContainer.appendChild(link);
+            });
+        }
+        
+        function showCategory(categoryKey) {
+            currentCategory = categoryKey;
+            
+            document.querySelectorAll('.nav-item').forEach(link => {
+                link.classList.remove('active');
+            });
+            const activeLink = document.querySelector(`.nav-item[data-category="${categoryKey}"]`);
+            if (activeLink) {
+                 activeLink.classList.add('active');
+            }
+
+            const dashboardContainer = document.getElementById('dashboard-container');
+            const catalogDisplay = document.getElementById('catalog-display');
+            const tableContainer = document.getElementById('table-view-container');
+            const exportBtn = document.getElementById('export-excel-btn');
+
+            if (categoryKey === 'BERANDA') {
+                exportBtn.style.display = 'none';
+                catalogDisplay.style.display = 'none';
+                tableContainer.style.display = 'none';
+                renderDashboard();
+                return;
+            }
+
+            const filteredDataKeys = Object.keys(submissionsData).filter(key => submissionsData[key].kategori === categoryKey);
+            currentFilteredData = filteredDataKeys.map(key => ({ id: key, ...submissionsData[key] }));
+
+            document.getElementById('catalog-title').innerHTML = `Data Submisi Kategori: <strong>${CATEGORIES[categoryKey].toUpperCase()}</strong>`;
+            document.getElementById('current-submissions').textContent = currentFilteredData.length;
+
+            exportBtn.style.display = 'inline-block';
+            exportBtn.textContent = `Ekspor Data ${CATEGORIES[categoryKey]} (${currentFilteredData.length} baris) ke Excel`;
+            
+            const isListView = LIST_VIEW_CATEGORIES.includes(categoryKey);
+
+            dashboardContainer.style.display = 'none';
+
+            if (isListView) {
+                catalogDisplay.style.display = 'none';
+                tableContainer.style.display = 'block';
+                renderTable(currentFilteredData, categoryKey); 
+            } else {
+                catalogDisplay.style.display = 'grid';
+                tableContainer.style.display = 'none';
+                renderCatalogItems(currentFilteredData);
+            }
+        }
+
+        function renderDashboard() {
+            const dashboardContainer = document.getElementById('dashboard-container');
+            dashboardContainer.style.display = 'grid';
+            dashboardContainer.innerHTML = ''; 
+
+            const totalSubmissions = Object.keys(submissionsData).length;
+
+            document.getElementById('catalog-title').innerHTML = `**Dashboard Statistik Submisi**`;
+            document.getElementById('current-submissions').textContent = totalSubmissions;
+
+
+            if (totalSubmissions === 0) {
+                dashboardContainer.innerHTML = '<div class="no-data">Tidak ada data submisi yang tersedia.</div>';
+                return;
+            }
+            
+            const stats = {
+                total: totalSubmissions,
+                reviewed: 0,
+                notReviewed: 0,
+                categories: {}
+            };
+            
+            Object.keys(CATEGORIES).filter(k => k !== 'BERANDA').forEach(key => {
+                stats.categories[key] = { count: 0, reviewed: 0 };
+            });
+
+            Object.values(submissionsData).forEach(sub => {
+                const reviewed = sub.reviewed || false;
+                if (reviewed) {
+                    stats.reviewed++;
+                } else {
+                    stats.notReviewed++;
+                }
+                
+                if (stats.categories[sub.kategori]) {
+                    stats.categories[sub.kategori].count++;
+                    if (reviewed) {
+                        stats.categories[sub.kategori].reviewed++;
+                    }
+                }
+            });
+
+            let html = '';
+            
+            html += `
+                <div class="stat-card total">
+                    <h3>TOTAL SELURUH SUBMISI</h3>
+                    <p class="stat-number">${stats.total}</p>
+                </div>
+            `;
+            
+            html += `
+                <div class="stat-card reviewed-stat">
+                    <h3>SUDAH DITINJAU</h3>
+                    <p class="stat-number">${stats.reviewed}</p>
+                </div>
+                <div class="stat-card not-reviewed-stat">
+                    <h3>BELUM DITINJAU</h3>
+                    <p class="stat-number">${stats.notReviewed}</p>
+                </div>
+            `;
+
+            Object.keys(CATEGORIES).filter(k => k !== 'BERANDA').forEach(key => {
+                const catStat = stats.categories[key] || { count: 0, reviewed: 0 };
+                html += `
+                    <div class="stat-card category">
+                        <h4>${CATEGORIES[key].toUpperCase()}</h4>
+                        <p class="stat-number-small">${catStat.count}</p>
+                        <span class="stat-sub">(${catStat.reviewed} Ditinjau / ${catStat.count - catStat.reviewed} Belum)</span>
+                    </div>
+                `;
+            });
+            
+            dashboardContainer.innerHTML = html;
+        }
+
+        function renderCatalogItems(data) {
+            const catalogDisplay = document.getElementById('catalog-display');
+            catalogDisplay.innerHTML = ''; 
+
+            if (data.length === 0) {
+                catalogDisplay.innerHTML = '<div class="no-data">Belum ada submisi untuk kategori ini.</div>';
+                return;
+            }
+
+            data.forEach((submission, index) => {
+                const item = document.createElement('div');
+                item.className = 'catalog-item';
+                
+                const reviewed = submission.reviewed || false;
+                const reviewBtnClass = reviewed ? 'reviewed' : 'not-reviewed';
+                const reviewBtnText = reviewed ? 'Sudah Ditinjau' : 'Belum Ditinjau';
+
+                item.innerHTML = `
+                    <h4>${index + 1}. ${submission.nama}</h4>
+                    <p><strong>Kategori:</strong> ${submission.kategori}</p>
+                    <p><strong>Alamat:</strong> ${submission.alamat}</p>
+                    <p><strong>Tingkat:</strong> ${submission.tingkat_pendidikan}</p>
+                    <p><strong>No. WA:</strong> ${submission.nomor_wa}</p>
+                    <p><span class="timestamp">Waktu Submisi: ${formatTimestamp(submission.timestamp)}</span></p>
+                    
+                    <div class="download-group">
+                        <p><strong>File Submisi:</strong></p>
+                        ${submission.file_karya ? `
+                            <button class="download-btn" onclick="downloadFile('${submission.file_karya.file_base64}', '${submission.file_karya.file_name}')" title="${submission.file_karya.file_name}">
+                                Unduh Karya
+                            </button>
+                        ` : ''}
+
+                        ${submission.kartu_siswa ? `
+                            <button class="download-btn secondary" onclick="downloadFile('${submission.kartu_siswa.file_base64}', '${submission.kartu_siswa.file_name}')" title="${submission.kartu_siswa.file_name}">
+                                Unduh KTS
+                            </button>
+                        ` : '<button class="download-btn secondary" disabled>KTS Tidak Ada</button>'}
+                        
+                        ${submission.bukti_pembayaran ? `
+                            <button class="download-btn secondary" onclick="downloadFile('${submission.bukti_pembayaran.file_base64}', '${submission.bukti_pembayaran.file_name}')" title="${submission.bukti_pembayaran.file_name}">
+                                Unduh Bukti Bayar
+                            </button>
+                        ` : '<button class="download-btn secondary" disabled>Bukti Bayar Tidak Ada</button>'}
+                    </div>
+                    
+                    <button class="review-btn ${reviewBtnClass}" 
+                        onclick="toggleReviewStatus('${submission.id}', ${reviewed})">
+                        ${reviewBtnText}
+                    </button>
+                `;
+                catalogDisplay.appendChild(item);
+            });
+        }
+        
+        function renderTable(data, categoryKey) {
+            const tbody = document.getElementById('list-table-body');
+            tbody.innerHTML = '';
+            
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="9" class="no-data">Belum ada submisi untuk kategori ini.</td></tr>';
+                return;
+            }
+
+            data.forEach((submission, index) => {
+                const row = tbody.insertRow();
+                
+                row.insertCell().textContent = index + 1;
+
+                row.insertCell().textContent = formatTimestamp(submission.timestamp);
+
+                row.insertCell().textContent = submission.nama;
+                
+                row.insertCell().textContent = submission.tingkat_pendidikan;
+
+                row.insertCell().textContent = submission.alamat;
+
+                row.insertCell().textContent = submission.nomor_wa;
+                
+                const ktsCell = row.insertCell();
+                if (submission.kartu_siswa && submission.kartu_siswa.file_base64) {
+                    const btn = document.createElement('button');
+                    btn.className = 'download-btn secondary';
+                    btn.textContent = `Unduh KTS`;
+                    btn.onclick = () => downloadFile(submission.kartu_siswa.file_base64, submission.kartu_siswa.file_name);
+                    ktsCell.appendChild(btn);
+                } else {
+                    ktsCell.textContent = 'Tidak Ada';
+                }
+
+                const buktiCell = row.insertCell();
+                if (submission.bukti_pembayaran && submission.bukti_pembayaran.file_base64) {
+                    const btn = document.createElement('button');
+                    btn.className = 'download-btn secondary';
+                    btn.textContent = `Unduh Bukti Bayar`;
+                    btn.onclick = () => downloadFile(submission.bukti_pembayaran.file_base64, submission.bukti_pembayaran.file_name);
+                    buktiCell.appendChild(btn);
+                } else {
+                    buktiCell.textContent = 'Tidak Ada';
+                }
+                
+                const statusCell = row.insertCell();
+                const reviewed = submission.reviewed || false;
+                const reviewBtnClass = reviewed ? 'reviewed' : 'not-reviewed';
+                const reviewBtnText = reviewed ? 'Sudah Ditinjau' : 'Belum Ditinjau';
+                
+                const btn = document.createElement('button');
+                btn.className = 'review-btn ' + reviewBtnClass;
+                btn.textContent = reviewBtnText;
+                btn.onclick = () => toggleReviewStatus(submission.id, reviewed);
+                
+                statusCell.appendChild(btn);
+            });
+        }
+        
+        function exportCurrentTable() {
+            if (currentFilteredData.length === 0) {
+                alert('Tidak ada data yang dapat diekspor.');
+                return;
+            }
+            
+            const categoryName = CATEGORIES[currentCategory];
+            const data = currentFilteredData;
+
+            let csv = [];
+            const headers = ['No', 'Waktu Submisi', 'Nama', 'Tingkat Pendidikan', 'Alamat', 'Nomor WA', 'Kategori', 'Status Tinjauan', 'Nama File KTS', 'Nama File Bukti Bayar', 'Nama File Karya'];
+            csv.push(headers.join(';'));
+            
+            data.forEach((submission, index) => {
+                const row = [
+                    index + 1,
+                    `"${formatTimestamp(submission.timestamp, 'full')}"`,
+                    `"${submission.nama}"`,
+                    `"${submission.tingkat_pendidikan}"`,
+                    `"${submission.alamat.replace(/"/g, '""')}"`, 
+                    `"${submission.nomor_wa}"`,
+                    `"${submission.kategori}"`,
+                    `"${submission.reviewed ? 'Sudah Ditinjau' : 'Belum Ditinjau'}"`, 
+                    `"${submission.kartu_siswa ? submission.kartu_siswa.file_name : 'N/A'}"`,
+                    `"${submission.bukti_pembayaran ? submission.bukti_pembayaran.file_name : 'N/A'}"`,
+                    `"${submission.file_karya && submission.file_karya.file_name ? submission.file_karya.file_name : 'N/A'}"` 
+                ];
+                csv.push(row.join(';'));
+            });
+
+            const csvContent = csv.join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            
+            const filename = `Data_Pendaftar_${categoryName}_${new Date().toLocaleDateString('id-ID').replace(/\//g, '-')}.csv`;
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            alert(`Data ${categoryName} berhasil diekspor ke ${filename}!`);
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchSubmissions);
+    </script>
+</body>
+</html>
