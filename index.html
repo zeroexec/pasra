@@ -82,7 +82,7 @@
             height: 40px;
             border-radius: 50%; 
             object-fit: cover;
-            border: 2px solid white; 
+            border: none; /* PERUBAHAN: Menghapus garis luar */
         }
         .branding-text {
             font-size: 1.1em;
@@ -310,6 +310,9 @@
             transition: background-color 0.3s, transform 0.2s;
             white-space: nowrap; 
             font-size: 0.9em;
+            text-decoration: none; /* added for anchor tags */
+            display: inline-block; /* added for anchor tags */
+            text-align: center; /* added for anchor tags */
         }
         .tombol-daftar-kategori { 
             background-color: var(--color-primary); 
@@ -541,7 +544,7 @@
                 display: none; 
             }
             .header-logo {
-                border: 2px solid white; 
+                border: none; /* PERUBAHAN: Menghapus garis luar di mobile */
             }
             .nav-menu {
                 display: flex;
@@ -747,7 +750,7 @@
                             <span class="quota-badge" id="status-bacapuisi"></span> 
                         </h4>
                         <p><strong>Ketentuan File Karya</strong></p>
-                        <p style="margin-top: -10px;">(Hanya Pendaftaran/Administrasi)</p>
+                        <p style="margin-top: -10px;">(Hanya Pendaftaran/Administrasi). **Wajib menggunakan salah satu dari 3 naskah yang disediakan.**</p>
                         <p><strong>Format File</strong></p>
                         <p style="margin-top: -10px;">Tidak ada file karya</p>
                         <p><strong>Metode Pengiriman</strong></p>
@@ -835,6 +838,16 @@
             <section id="form-pendaftaran" class="form-section">
                 <h3 id="judul-form" style="margin-top: 0; color: var(--color-primary);">Formulir Pendaftaran [Kategori]</h3>
                 <form onsubmit="kirimPendaftaran(event)">
+                    
+                    <div id="puisi-download-section" style="display: none; margin-bottom: 25px; padding: 15px; border: 1px dashed var(--color-secondary); border-radius: 8px; text-align: center;">
+                        <p style="font-weight: 600; color: var(--color-primary); margin-top: 0;">Unduh Naskah Puisi Pilihan (Wajib Digunakan untuk Baca Puisi):</p>
+                        <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
+                            <a href="https://drive.google.com/uc?export=download&id=GD_PUISI_1_ID_ASLI" target="_blank" class="tombol-base" style="background-color: #5bc0de; color: white; font-size: 0.85em;">Puisi 1 (Download)</a>
+                            <a href="https://drive.google.com/uc?export=download&id=GD_PUISI_2_ID_ASLI" target="_blank" class="tombol-base" style="background-color: #5bc0de; color: white; font-size: 0.85em;">Puisi 2 (Download)</a>
+                            <a href="https://drive.google.com/uc?export=download&id=GD_PUISI_3_ID_ASLI" target="_blank" class="tombol-base" style="background-color: #5bc0de; color: white; font-size: 0.85em;">Puisi 3 (Download)</a>
+                        </div>
+                        <p style="font-size: 0.8em; text-align: center; margin-bottom: 0; margin-top: 10px; color: var(--color-text);">Pilih salah satu naskah di atas untuk dibacakan.</p>
+                    </div>
                     <div class="form-group"><label>Nama Lengkap</label><input type="text" name="nama" required></div>
                     <div class="form-group"><label>Alamat</label><input type="text" name="alamat" required></div>
                     <div class="form-group">
@@ -918,17 +931,14 @@
         
         const MAX_SIZE_BASE64 = 5242880; 
 
-        function generateRandomQuota(min, max) {
-            return Math.floor(Math.random() * (max - min + 1)) + min;
-        }
-
+        // Kuota diset 50 untuk semua kategori
         let QUOTAS = {
-            'puisi': generateRandomQuota(10, 50),
-            'esai': generateRandomQuota(10, 50),
-            'cerpen': generateRandomQuota(10, 50),
-            'vidiografi': generateRandomQuota(10, 50),
-            'bacapuisi': generateRandomQuota(10, 50),
-            'dai_madura': generateRandomQuota(10, 50) 
+            'puisi': 50,
+            'esai': 50,
+            'cerpen': 50,
+            'vidiografi': 50,
+            'bacapuisi': 50,
+            'dai_madura': 50 
         };
         
         const JUKNIS_URLS = {
@@ -966,7 +976,8 @@
                         button.textContent = 'Kuota Penuh';
                         button.style.backgroundColor = '#6c757d';
                     } else {
-                        quotaBadge.textContent = `${kuota} SLOT`;
+                        // Mengubah 'SLOT' menjadi 'KUOTA'
+                        quotaBadge.textContent = `${kuota} KUOTA`; 
                         quotaBadge.className = 'quota-badge available'; 
                         button.disabled = false;
                         button.textContent = 'Daftar Lomba';
@@ -1021,6 +1032,9 @@
             const labelFileKarya = document.getElementById('label-file-karya');
             const kategoriTerpilih = document.getElementById('kategori_terpilih');
             const submitButton = formElement.querySelector('button[type="submit"]');
+            
+            // Dapatkan elemen bagian download puisi
+            const puisiDownloadSection = document.getElementById('puisi-download-section');
 
             if (kuotaSaatIni <= 0) {
                 alert('Mohon maaf, kuota untuk kategori ' + kategori.toUpperCase() + ' sudah penuh.');
@@ -1032,8 +1046,16 @@
 
             judulForm.textContent = 'Formulir Pendaftaran ' + kategori.toUpperCase();
             kategoriTerpilih.value = kategori;
+            
+            // LOGIC BARU: Menampilkan bagian download puisi HANYA untuk BACA PUISI
+            if (kategori === 'bacapuisi') { 
+                puisiDownloadSection.style.display = 'block';
+            } else {
+                puisiDownloadSection.style.display = 'none';
+            }
 
-            if (kategori === 'bacapuisi' || kategori === 'dai_madura') {
+
+            if (kategori === 'bacapuisi' || kategori === 'dai_madura') { 
                 fileKaryaGroup.style.display = 'none';
                 inputFileKarya.removeAttribute('required');
                 inputFileKarya.value = '';
@@ -1042,7 +1064,7 @@
                 inputFileKarya.setAttribute('required', 'required');
                 inputFileKarya.setAttribute('accept', accept_file);
                 
-                // Logika label file karya yang diperbarui
+                // Logika label file karya
                 if (kategori === 'vidiografi') {
                      labelFileKarya.innerHTML = 'Unggah File Karya <strong>Video</strong> (<strong class="hijau-teks">.mp4, dll.</strong>) <br><span class="hijau-teks">Wajib | Maks. 5MB</span>';
                 } else {
