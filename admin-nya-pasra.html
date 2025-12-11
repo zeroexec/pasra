@@ -3,751 +3,544 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PASRA - Panel Admin (Dashboard & Data)</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <title>Admin PASRA - Data Pendaftaran</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --color-primary: #1e8449;
-            --color-secondary: #28a846;
-            --color-text: #34495e;
-            --color-background: #f4f6f9;
+            --color-primary: #006400;
+            --color-primary-light: #e6ffe6;
+            --color-text: #2c3e50;
+            --color-background: #f8f9fa;
             --color-card-bg: #ffffff;
-            --color-border: #e0e0e0;
-            --color-urgent-warning: #dc3545;
-            --header-height: 60px;
+            --color-border: #cccccc;
+            --color-danger-btn: #e74c3c;
+            --color-view-btn: #007500;
+            --color-view-btn-hover: #005000;
+            --color-accent-text: #006400;
         }
 
-        * { box-sizing: border-box; }
         body {
             font-family: 'Poppins', sans-serif;
-            margin: 0;
-            padding-top: var(--header-height);
             background-color: var(--color-background);
             color: var(--color-text);
+            margin: 0;
+            padding: 30px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            background-color: var(--color-card-bg);
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: var(--color-primary);
+            border-bottom: 2px solid var(--color-primary-light);
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 600;
         }
         
-        .fixed-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: var(--header-height);
-            background-color: var(--color-primary);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            z-index: 1000;
+        .header-controls {
             display: flex;
+            justify-content: space-between;
             align-items: center;
+            margin-bottom: 25px;
+            padding: 15px;
+            background-color: var(--color-primary-light);
+            border-radius: 6px;
+            border: 1px solid var(--color-border);
         }
-        .nav-container {
-            width: 100%;
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: flex-start;
-            overflow-x: auto;
-            white-space: nowrap;
-            padding: 0 20px;
-        }
-        .nav-item {
-            color: white;
-            text-decoration: none;
-            padding: 10px 15px;
+
+        .data-count-display {
+            font-size: 1.1em;
             font-weight: 600;
-            font-size: 0.9em;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            border-bottom: 3px solid transparent;
+            color: var(--color-text);
+        }
+
+        .data-count-display strong {
+            color: var(--color-accent-text);
+            font-size: 1.2em;
             margin-right: 5px;
         }
-        .nav-item:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-bottom-color: white;
+        
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap; 
+            gap: 8px; 
         }
-        .nav-item.active {
-            background-color: var(--color-secondary);
-            border-bottom-color: #ffc107;
-            color: #ffc107;
+
+        .filter-btn {
+            padding: 8px 15px;
+            border: 1px solid var(--color-primary);
+            border-radius: 4px;
+            background-color: white;
+            color: var(--color-primary);
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.1s, color 0.1s;
+        }
+
+        .filter-btn:hover {
+            background-color: var(--color-primary-light);
+        }
+
+        .filter-btn.active {
+            background-color: var(--color-primary);
+            color: white;
+            border-color: var(--color-primary);
         }
         
-        .container {
-            max-width: 1400px;
-            margin: 20px auto;
-            padding: 30px 20px;
-        }
-        h1 {
-            color: var(--color-text);
-            font-size: 1.8em;
-            margin-bottom: 15px;
-        }
-        #total-submissions, #current-submissions {
-            color: var(--color-primary);
-            font-weight: 700;
-        }
-        .controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        .controls p {
-            margin: 5px 0;
-        }
-
-        #dashboard-container {
+        #pendaftaran-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 1em;
             margin-top: 20px;
         }
-        .stat-card {
-            background-color: var(--color-card-bg);
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-        .stat-card h3, .stat-card h4 {
-            margin: 0 0 15px 0;
-            font-size: 1.1em;
-            font-weight: 700;
-            color: #555;
-            text-transform: uppercase;
-        }
-        .stat-card.total {
-            border-bottom: 5px solid var(--color-primary);
-        }
-        .stat-card.reviewed-stat {
-            border-bottom: 5px solid var(--color-secondary);
-        }
-        .stat-card.not-reviewed-stat {
-            border-bottom: 5px solid var(--color-urgent-warning);
-        }
-        .stat-number {
-            font-size: 3em;
-            font-weight: 900;
-            color: var(--color-primary);
-            line-height: 1;
-        }
-        .stat-card.reviewed-stat .stat-number {
-            color: var(--color-secondary);
-        }
-        .stat-card.not-reviewed-stat .stat-number {
-            color: var(--color-urgent-warning);
-        }
-        .stat-number-small {
-            font-size: 2em;
-            font-weight: 900;
-            color: var(--color-primary);
-            line-height: 1;
-            margin-bottom: 5px;
-        }
-        .stat-sub {
-            font-size: 0.85em;
-            color: #777;
-            display: block;
+
+        #pendaftaran-table th, #pendaftaran-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--color-border);
         }
 
-        .catalog-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 20px;
-        }
-        .catalog-item {
-            background-color: var(--color-card-bg);
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            border-left: 5px solid var(--color-secondary);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-        .catalog-item h4 {
-            color: var(--color-primary);
-            margin: 0 0 10px 0;
-            font-size: 1.2em;
-            border-bottom: 1px dashed var(--color-border);
-            padding-bottom: 8px;
-        }
-        .catalog-item p {
-            margin: 5px 0;
-            font-size: 0.95em;
-        }
-        .catalog-item strong {
+        #pendaftaran-table th {
+            background-color: var(--color-primary);
+            color: white;
             font-weight: 600;
+            text-transform: uppercase;
         }
-        .download-group {
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid var(--color-border);
+        
+        #pendaftaran-table tbody tr:hover {
+            background-color: #f4f6f8;
+        }
+        
+        #pendaftaran-table td:nth-child(4) { 
+            text-align: center;
+            width: 80px;
+        }
+
+        .action-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.1s; 
+            margin: 3px;
+        }
+
+        .view-btn {
+            background-color: var(--color-view-btn);
+            color: white;
+        }
+
+        .view-btn:hover {
+            background-color: var(--color-view-btn-hover);
+        }
+
+        .delete-btn {
+            background-color: var(--color-danger-btn);
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .modal-overlay {
+            display: none; 
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5); 
+        }
+
+        .modal-content {
+            background-color: var(--color-card-bg);
+            margin: 5% auto; 
+            padding: 30px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 700px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .close-btn {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            transition: color 0.1s;
+        }
+
+        .close-btn:hover,
+        .close-btn:focus {
+            color: var(--color-danger-btn);
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        .detail-row {
+            display: flex;
             margin-bottom: 10px;
         }
         
-        #list-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-            font-size: 0.85em;
-        }
-        #list-table th, #list-table td {
-            border: 1px solid var(--color-border);
-            padding: 8px;
-            text-align: left;
-            vertical-align: top;
-        }
-        #list-table th {
-            background-color: var(--color-primary);
-            color: white;
-            font-weight: 700;
-            position: sticky;
-            top: 60px; 
-            z-index: 500;
-        }
-        #list-table td:last-child {
-            min-width: 150px; 
-        }
-
-        .download-btn, #export-excel-btn {
-            background-color: var(--color-secondary);
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            font-size: 0.85em;
-            text-decoration: none;
-            display: inline-block;
-            margin-right: 10px;
-            margin-bottom: 8px;
+        .detail-label {
             font-weight: 600;
-        }
-        .download-btn.secondary {
-             background-color: #5a6268; 
-             padding: 6px 10px;
-             font-size: 0.8em;
-        }
-        .download-btn:hover, #export-excel-btn:hover {
-            background-color: #1a7140;
-        }
-        .download-btn.secondary:hover {
-            background-color: #44494e;
+            color: var(--color-primary);
+            width: 150px;
+            flex-shrink: 0;
         }
         
-        .review-btn {
-            border: none;
-            padding: 8px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: background-color 0.3s;
-            margin: 5px auto 0 auto;
-            font-size: 0.85em;
-            display: block; 
-            width: 100%;
-            text-align: center;
+        .detail-value {
+            flex-grow: 1;
+            padding-left: 10px;
+            word-wrap: break-word; 
         }
-        .review-btn.not-reviewed {
-            background-color: var(--color-urgent-warning); 
-            color: white;
+        
+        .detail-link-group button {
+            margin-right: 10px;
         }
-        .review-btn.reviewed {
-            background-color: var(--color-secondary); 
-            color: white;
-        }
-        .review-btn.not-reviewed:hover {
-            background-color: #c82333;
-        }
-        .review-btn.reviewed:hover {
-            background-color: #1a7140;
-        }
-
-        .no-data {
-            text-align: center;
-            font-style: italic;
-            padding: 20px;
-            grid-column: 1 / -1;
-            background-color: #fff3cd;
-            color: #856404;
-            border-radius: 5px;
-        }
-        .timestamp {
-            font-size: 0.8em;
-            color: #777;
-            margin-top: 10px;
-            display: block;
+        
+        #auth-section, #logout-button, .modal-preview-overlay {
+            display: none !important;
         }
     </style>
 </head>
 <body>
-    
-    <div class="fixed-header">
-        <nav class="nav-container" id="category-nav"></nav>
-    </div>
 
-    <div class="container" id="admin-panel">
-        <h1 id="catalog-title">Data Submisi Lomba</h1>
-
-        <div class="controls">
-             <button id="export-excel-btn" onclick="exportCurrentTable()" style="display:none;">Ekspor Data ke Excel</button>
-            <p>Total Submisi Ditemukan: <strong id="current-submissions">0</strong> / Total Seluruh Submisi: <strong id="total-submissions">0</strong></p>
-        </div>
-
-        <div class="catalog-grid" id="dashboard-container" style="display:none;">
-        </div>
-
-        <div class="catalog-grid" id="catalog-display">
-            <div class="no-data">Memuat data submisi...</div>
-        </div>
+    <div class="container">
+        <h1>Dashboard Administrasi Lomba PASRA 2026</h1>
         
-        <div id="table-view-container" style="display: none;">
-            <div style="overflow-x: auto;">
-                <table id="list-table">
+        <div id="data-section">
+            
+            <div class="header-controls">
+                <div class="data-count-display">
+                    <strong id="jumlah-data">0</strong> PENDAFTAR
+                </div>
+                <div class="filter-buttons" id="filter-container">
+                    </div>
+            </div>
+
+            <div class="data-table-container">
+                <table id="pendaftaran-table">
                     <thead>
                         <tr>
                             <th>No.</th>
-                            <th>Waktu Submisi</th>
+                            <th>Kategori</th>
                             <th>Nama</th>
-                            <th>Tingkat</th>
-                            <th>Alamat</th>
-                            <th>No. WA</th>
-                            <th>KTS/ID Card</th>
-                            <th>Bukti Bayar</th>
-                            <th>Status Tinjauan</th> 
+                            <th>Tinjau</th>
+                            <th>Aksi</th>
                         </tr>
                     </thead>
-                    <tbody id="list-table-body">
+                    <tbody id="pendaftaran-body">
+                        <tr><td colspan="5" style="text-align: center;">Memuat data...</td></tr>
                     </tbody>
                 </table>
             </div>
+
+        </div>
+    </div>
+    
+    <div id="detailModal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h2>Detail Pendaftar <span id="detail-id"></span></h2>
+            <hr>
+            
+            <div class="detail-row"><div class="detail-label">Kategori:</div> <div class="detail-value" id="detail-kategori"></div></div>
+            <div class="detail-row"><div class="detail-label">Nama:</div> <div class="detail-value" id="detail-nama"></div></div>
+            <div class="detail-row"><div class="detail-label">Pendidikan:</div> <div class="detail-value" id="detail-pendidikan"></div></div>
+            <div class="detail-row"><div class="detail-label">Nomor WA:</div> <div class="detail-value" id="detail-wa"></div></div>
+            <div class="detail-row"><div class="detail-label">Waktu Daftar:</div> <div class="detail-value" id="detail-waktu"></div></div>
+            
+            <h3>File Dokumen</h3>
+            <div class="detail-link-group">
+                <div class="detail-row"><div class="detail-label">Bukti Bayar:</div> <div class="detail-value" id="detail-bukti-bayar"></div></div>
+                <div class="detail-row"><div class="detail-label">KTS/ID Card:</div> <div class="detail-value" id="detail-kts-card"></div></div>
+                <div class="detail-row"><div class="detail-label">File Karya:</div> <div class="detail-value" id="detail-file-karya"></div></div>
+            </div>
+            
+            <button class="delete-btn action-btn" id="modal-delete-btn" style="margin-top: 20px;">Hapus Data Ini</button>
         </div>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyB-kiGFrRI3GMfW7DT2Dt7DmpDBsFNkE", 
-            databaseURL: "https://mysite-98643-default-rtdb.firebaseio.com",
-        };
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-        const rtdbRefSubmissions = database.ref('submissions_pasra');
+        const SUPABASE_URL = 'https://kerltwgefpeqjicsxupo.supabase.co'; 
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtlcmx0d2dlZnBlcWppY3N4dXBvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0MTk3ODAsImV4cCI6MjA4MDk5NTc4MH0.86-Cl6cSe6OxhCzvI8qVOuZrAyS-UTi7RphMD2KEOX0'; 
         
-        let submissionsData = {};
-        let currentCategory = 'BERANDA'; 
-        let currentFilteredData = []; 
+        const BUCKET_NAME = 'pasra-lomba'; 
+        const TABLE_NAME = 'pendaftaran';
         
-        const CATEGORIES = {
-            'BERANDA': 'Beranda', 
-            'PUISI': 'Puisi',
-            'ESAI': 'Esai',
-            'CERPEN': 'Cerpen',
-            'VIDIOGRAFI': 'Vidiografi',
-            'BACAPUISI': 'Baca Puisi',
-            'DAI_MADURA': 'Da\'i Bahasa Madura'
-        };
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        const LIST_VIEW_CATEGORIES = ['BACAPUISI', 'DAI_MADURA'];
-
-        function toggleReviewStatus(submissionId, currentStatus) {
-            const newStatus = !currentStatus;
-            const ref = rtdbRefSubmissions.child(submissionId);
-            
-            ref.update({
-                reviewed: newStatus
-            })
-            .then(() => {
-                if(submissionsData[submissionId]) {
-                    submissionsData[submissionId].reviewed = newStatus;
-                }
-                showCategory(currentCategory); 
-            })
-            .catch(error => {
-                alert("Gagal memperbarui status di database: " + error.message);
-                console.error("Firebase update failed:", error);
-            });
-        }
+        const pendaftaranBody = document.getElementById('pendaftaran-body');
+        const jumlahData = document.getElementById('jumlah-data');
+        const filterContainer = document.getElementById('filter-container'); 
         
-        function downloadFile(base64Data, filename) {
-            if (!base64Data) {
-                alert('File tidak tersedia.');
-                return;
-            }
-            
-            try {
-                const parts = base64Data.split(';');
-                if (parts.length < 2) { throw new Error('Format Base64 tidak valid.'); }
-                
-                const mimeType = parts[0].split(':')[1];
-                const base64Content = parts[1].split(',')[1];
-                
-                const byteCharacters = atob(base64Content);
-                const byteArrays = [];
-                
-                for (let offset = 0; offset < byteCharacters.length; offset += 512) {
-                    const slice = byteCharacters.slice(offset, offset + 512);
-                    const byteNumbers = new Array(slice.length);
-                    for (let i = 0; i < slice.length; i++) {
-                        byteNumbers[i] = slice.charCodeAt(i);
-                    }
-                    const byteArray = new Uint8Array(byteNumbers);
-                    byteArrays.push(byteArray);
-                }
-                
-                const blob = new Blob(byteArrays, { type: mimeType });
-                const url = URL.createObjectURL(blob);
-                
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = filename || 'file_unduhan';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                
-            } catch(e) {
-                 alert('Gagal mengunduh file. Kemungkinan data Base64 rusak atau tidak lengkap.');
-                 console.error("Download Error:", e);
-            }
-        }
+        const KATEGORI_OPTIONS = ['all', 'PUISI', 'ESAI', 'CERPEN', 'VIDIOGRAFI', 'BACAPUISI', 'DAI_MADURA'];
+        let activeKategori = 'all'; 
 
-        function formatTimestamp(timestamp, type = 'full') {
-            const date = new Date(timestamp);
-            if (type === 'simple') {
-                 return date.toLocaleDateString('id-ID');
-            }
-            return date.toLocaleString('id-ID', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-        }
-        
-        function fetchSubmissions() {
-            rtdbRefSubmissions.on('value', (snapshot) => {
-                const data = snapshot.val();
-                submissionsData = {};
-                if (data) {
-                    Object.keys(data).forEach(key => {
-                        submissionsData[key] = data[key];
-                    });
-                }
-                
-                document.getElementById('total-submissions').textContent = Object.keys(submissionsData).length;
-                initCatalog();
-            }, (error) => {
-                document.getElementById('catalog-display').innerHTML = '<div class="no-data" style="background-color: #f8d7da; color: #721c24;">Gagal memuat data: ' + error.message + '</div>';
-            });
-        }
+        const detailModal = document.getElementById('detailModal');
+        const modalDeleteBtn = document.getElementById('modal-delete-btn');
+        let allPendaftarData = []; 
 
-        function initCatalog() {
-            createCategoryNav();
-            showCategory(currentCategory);
-        }
-
-        function createCategoryNav() {
-            const navContainer = document.getElementById('category-nav');
-            navContainer.innerHTML = '';
-            
-            Object.keys(CATEGORIES).forEach(categoryKey => {
-                const link = document.createElement('a');
-                link.className = 'nav-item';
-                link.textContent = CATEGORIES[categoryKey].toUpperCase();
-                link.setAttribute('data-category', categoryKey);
-                link.onclick = () => showCategory(categoryKey);
-                navContainer.appendChild(link);
-            });
-        }
-        
-        function showCategory(categoryKey) {
-            currentCategory = categoryKey;
-            
-            document.querySelectorAll('.nav-item').forEach(link => {
-                link.classList.remove('active');
-            });
-            const activeLink = document.querySelector(`.nav-item[data-category="${categoryKey}"]`);
-            if (activeLink) {
-                 activeLink.classList.add('active');
-            }
-
-            const dashboardContainer = document.getElementById('dashboard-container');
-            const catalogDisplay = document.getElementById('catalog-display');
-            const tableContainer = document.getElementById('table-view-container');
-            const exportBtn = document.getElementById('export-excel-btn');
-
-            if (categoryKey === 'BERANDA') {
-                exportBtn.style.display = 'none';
-                catalogDisplay.style.display = 'none';
-                tableContainer.style.display = 'none';
-                renderDashboard();
-                return;
-            }
-
-            const filteredDataKeys = Object.keys(submissionsData).filter(key => submissionsData[key].kategori === categoryKey);
-            currentFilteredData = filteredDataKeys.map(key => ({ id: key, ...submissionsData[key] }));
-
-            document.getElementById('catalog-title').innerHTML = `Data Submisi Kategori: <strong>${CATEGORIES[categoryKey].toUpperCase()}</strong>`;
-            document.getElementById('current-submissions').textContent = currentFilteredData.length;
-
-            exportBtn.style.display = 'inline-block';
-            exportBtn.textContent = `Ekspor Data ${CATEGORIES[categoryKey]} (${currentFilteredData.length} baris) ke Excel`;
-            
-            const isListView = LIST_VIEW_CATEGORIES.includes(categoryKey);
-
-            dashboardContainer.style.display = 'none';
-
-            if (isListView) {
-                catalogDisplay.style.display = 'none';
-                tableContainer.style.display = 'block';
-                renderTable(currentFilteredData, categoryKey); 
-            } else {
-                catalogDisplay.style.display = 'grid';
-                tableContainer.style.display = 'none';
-                renderCatalogItems(currentFilteredData);
-            }
-        }
-
-        function renderDashboard() {
-            const dashboardContainer = document.getElementById('dashboard-container');
-            dashboardContainer.style.display = 'grid';
-            dashboardContainer.innerHTML = ''; 
-
-            const totalSubmissions = Object.keys(submissionsData).length;
-
-            document.getElementById('catalog-title').innerHTML = `**Dashboard Statistik Submisi**`;
-            document.getElementById('current-submissions').textContent = totalSubmissions;
-
-
-            if (totalSubmissions === 0) {
-                dashboardContainer.innerHTML = '<div class="no-data">Tidak ada data submisi yang tersedia.</div>';
-                return;
-            }
-            
-            const stats = {
-                total: totalSubmissions,
-                reviewed: 0,
-                notReviewed: 0,
-                categories: {}
-            };
-            
-            Object.keys(CATEGORIES).filter(k => k !== 'BERANDA').forEach(key => {
-                stats.categories[key] = { count: 0, reviewed: 0 };
-            });
-
-            Object.values(submissionsData).forEach(sub => {
-                const reviewed = sub.reviewed || false;
-                if (reviewed) {
-                    stats.reviewed++;
-                } else {
-                    stats.notReviewed++;
-                }
-                
-                if (stats.categories[sub.kategori]) {
-                    stats.categories[sub.kategori].count++;
-                    if (reviewed) {
-                        stats.categories[sub.kategori].reviewed++;
-                    }
-                }
-            });
-
-            let html = '';
-            
-            html += `
-                <div class="stat-card total">
-                    <h3>TOTAL SELURUH SUBMISI</h3>
-                    <p class="stat-number">${stats.total}</p>
-                </div>
-            `;
-            
-            html += `
-                <div class="stat-card reviewed-stat">
-                    <h3>SUDAH DITINJAU</h3>
-                    <p class="stat-number">${stats.reviewed}</p>
-                </div>
-                <div class="stat-card not-reviewed-stat">
-                    <h3>BELUM DITINJAU</h3>
-                    <p class="stat-number">${stats.notReviewed}</p>
-                </div>
-            `;
-
-            Object.keys(CATEGORIES).filter(k => k !== 'BERANDA').forEach(key => {
-                const catStat = stats.categories[key] || { count: 0, reviewed: 0 };
-                html += `
-                    <div class="stat-card category">
-                        <h4>${CATEGORIES[key].toUpperCase()}</h4>
-                        <p class="stat-number-small">${catStat.count}</p>
-                        <span class="stat-sub">(${catStat.reviewed} Ditinjau / ${catStat.count - catStat.reviewed} Belum)</span>
-                    </div>
-                `;
-            });
-            
-            dashboardContainer.innerHTML = html;
-        }
-
-        function renderCatalogItems(data) {
-            const catalogDisplay = document.getElementById('catalog-display');
-            catalogDisplay.innerHTML = ''; 
-
-            if (data.length === 0) {
-                catalogDisplay.innerHTML = '<div class="no-data">Belum ada submisi untuk kategori ini.</div>';
-                return;
-            }
-
-            data.forEach((submission, index) => {
-                const item = document.createElement('div');
-                item.className = 'catalog-item';
-                
-                const reviewed = submission.reviewed || false;
-                const reviewBtnClass = reviewed ? 'reviewed' : 'not-reviewed';
-                const reviewBtnText = reviewed ? 'Sudah Ditinjau' : 'Belum Ditinjau';
-
-                item.innerHTML = `
-                    <h4>${index + 1}. ${submission.nama}</h4>
-                    <p><strong>Kategori:</strong> ${submission.kategori}</p>
-                    <p><strong>Alamat:</strong> ${submission.alamat}</p>
-                    <p><strong>Tingkat:</strong> ${submission.tingkat_pendidikan}</p>
-                    <p><strong>No. WA:</strong> ${submission.nomor_wa}</p>
-                    <p><span class="timestamp">Waktu Submisi: ${formatTimestamp(submission.timestamp)}</span></p>
-                    
-                    <div class="download-group">
-                        <p><strong>File Submisi:</strong></p>
-                        ${submission.file_karya ? `
-                            <button class="download-btn" onclick="downloadFile('${submission.file_karya.file_base64}', '${submission.file_karya.file_name}')" title="${submission.file_karya.file_name}">
-                                Unduh Karya
-                            </button>
-                        ` : ''}
-
-                        ${submission.kartu_siswa ? `
-                            <button class="download-btn secondary" onclick="downloadFile('${submission.kartu_siswa.file_base64}', '${submission.kartu_siswa.file_name}')" title="${submission.kartu_siswa.file_name}">
-                                Unduh KTS
-                            </button>
-                        ` : '<button class="download-btn secondary" disabled>KTS Tidak Ada</button>'}
-                        
-                        ${submission.bukti_pembayaran ? `
-                            <button class="download-btn secondary" onclick="downloadFile('${submission.bukti_pembayaran.file_base64}', '${submission.bukti_pembayaran.file_name}')" title="${submission.bukti_pembayaran.file_name}">
-                                Unduh Bukti Bayar
-                            </button>
-                        ` : '<button class="download-btn secondary" disabled>Bukti Bayar Tidak Ada</button>'}
-                    </div>
-                    
-                    <button class="review-btn ${reviewBtnClass}" 
-                        onclick="toggleReviewStatus('${submission.id}', ${reviewed})">
-                        ${reviewBtnText}
-                    </button>
-                `;
-                catalogDisplay.appendChild(item);
-            });
-        }
-        
-        function renderTable(data, categoryKey) {
-            const tbody = document.getElementById('list-table-body');
-            tbody.innerHTML = '';
-            
-            if (data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="9" class="no-data">Belum ada submisi untuk kategori ini.</td></tr>';
-                return;
-            }
-
-            data.forEach((submission, index) => {
-                const row = tbody.insertRow();
-                
-                row.insertCell().textContent = index + 1;
-
-                row.insertCell().textContent = formatTimestamp(submission.timestamp);
-
-                row.insertCell().textContent = submission.nama;
-                
-                row.insertCell().textContent = submission.tingkat_pendidikan;
-
-                row.insertCell().textContent = submission.alamat;
-
-                row.insertCell().textContent = submission.nomor_wa;
-                
-                const ktsCell = row.insertCell();
-                if (submission.kartu_siswa && submission.kartu_siswa.file_base64) {
-                    const btn = document.createElement('button');
-                    btn.className = 'download-btn secondary';
-                    btn.textContent = `Unduh KTS`;
-                    btn.onclick = () => downloadFile(submission.kartu_siswa.file_base64, submission.kartu_siswa.file_name);
-                    ktsCell.appendChild(btn);
-                } else {
-                    ktsCell.textContent = 'Tidak Ada';
-                }
-
-                const buktiCell = row.insertCell();
-                if (submission.bukti_pembayaran && submission.bukti_pembayaran.file_base64) {
-                    const btn = document.createElement('button');
-                    btn.className = 'download-btn secondary';
-                    btn.textContent = `Unduh Bukti Bayar`;
-                    btn.onclick = () => downloadFile(submission.bukti_pembayaran.file_base64, submission.bukti_pembayaran.file_name);
-                    buktiCell.appendChild(btn);
-                } else {
-                    buktiCell.textContent = 'Tidak Ada';
-                }
-                
-                const statusCell = row.insertCell();
-                const reviewed = submission.reviewed || false;
-                const reviewBtnClass = reviewed ? 'reviewed' : 'not-reviewed';
-                const reviewBtnText = reviewed ? 'Sudah Ditinjau' : 'Belum Ditinjau';
-                
+        function setupFilterButtons() {
+            filterContainer.innerHTML = '';
+            KATEGORI_OPTIONS.forEach(kategori => {
                 const btn = document.createElement('button');
-                btn.className = 'review-btn ' + reviewBtnClass;
-                btn.textContent = reviewBtnText;
-                btn.onclick = () => toggleReviewStatus(submission.id, reviewed);
+                btn.className = 'filter-btn';
+                btn.textContent = kategori === 'all' ? 'Semua Kategori' : kategori;
+                btn.setAttribute('data-kategori', kategori);
                 
-                statusCell.appendChild(btn);
+                if (kategori === activeKategori) {
+                    btn.classList.add('active');
+                }
+
+                btn.onclick = () => {
+                    setActiveKategori(kategori);
+                };
+                filterContainer.appendChild(btn);
             });
         }
         
-        function exportCurrentTable() {
-            if (currentFilteredData.length === 0) {
-                alert('Tidak ada data yang dapat diekspor.');
+        function setActiveKategori(kategori) {
+            activeKategori = kategori;
+            
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            const activeBtn = document.querySelector(`.filter-btn[data-kategori="${kategori}"]`);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+            }
+            
+            fetchData();
+        }
+
+        async function fetchData() {
+            pendaftaranBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Memuat data...</td></tr>'; 
+            
+            let query = supabaseClient
+                .from(TABLE_NAME)
+                .select('*')
+                .order('timestamp', { ascending: false });
+
+            if (activeKategori !== 'all') {
+                query = query.eq('kategori', activeKategori);
+            }
+
+            const { data, error } = await query;
+
+            pendaftaranBody.innerHTML = ''; 
+            allPendaftarData = data || [];
+
+            if (error) {
+                pendaftaranBody.innerHTML = `<tr><td colspan="5" style="background-color:#f8d7da; color:#dc3545; font-weight:700;">Gagal memuat data: ${error.message}.</td></tr>`;
+                jumlahData.textContent = '0';
+                return;
+            }
+
+            if (data && data.length > 0) {
+                data.forEach((pendaftar, index) => { 
+                    const row = pendaftaranBody.insertRow();
+                    
+                    row.insertCell().textContent = index + 1; 
+                    row.insertCell().textContent = pendaftar.kategori;
+                    row.insertCell().textContent = pendaftar.nama;
+                    
+                    const reviewCell = row.insertCell();
+                    reviewCell.innerHTML = `
+                        <input 
+                            type="checkbox" 
+                            ${pendaftar.sudah_ditinjau ? 'checked' : ''} 
+                            onchange="toggleReviewStatus(${pendaftar.id}, this.checked)"
+                        />
+                    `;
+
+                    const actionCell = row.insertCell();
+                    actionCell.innerHTML = `
+                        <button class="view-btn action-btn" onclick="showDetail(${pendaftar.id})">Lihat Detail</button>
+                    `;
+                });
+
+                jumlahData.textContent = data.length;
+            } else {
+                pendaftaranBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Belum ada data pendaftaran.</td></tr>';
+                jumlahData.textContent = '0';
+            }
+        }
+        
+        async function toggleReviewStatus(id, isChecked) {
+            
+            const { error } = await supabaseClient
+                .from(TABLE_NAME)
+                .update({ sudah_ditinjau: isChecked }) 
+                .eq('id', id);
+
+            if (error) {
+                console.error('Gagal memperbarui status tinjauan:', error);
+                alert(`Gagal memperbarui status data ID ${id}: ${error.message}.`);
+                
+                const checkbox = document.querySelector(`input[type="checkbox"][onchange*="${id}"]`);
+                if (checkbox) {
+                    checkbox.checked = !isChecked;
+                }
                 return;
             }
             
-            const categoryName = CATEGORIES[currentCategory];
-            const data = currentFilteredData;
+            const pendaftarIndex = allPendaftarData.findIndex(p => p.id === id);
+            if (pendaftarIndex !== -1) {
+                allPendaftarData[pendaftarIndex].sudah_ditinjau = isChecked;
+            }
 
-            let csv = [];
-            const headers = ['No', 'Waktu Submisi', 'Nama', 'Tingkat Pendidikan', 'Alamat', 'Nomor WA', 'Kategori', 'Status Tinjauan', 'Nama File KTS', 'Nama File Bukti Bayar', 'Nama File Karya'];
-            csv.push(headers.join(';'));
+            console.log(`Status tinjauan ID ${id} diubah menjadi: ${isChecked}`);
+        }
+        
+        const createFileLink = (path, label) => {
+            if (!path) return ' - '; 
             
-            data.forEach((submission, index) => {
-                const row = [
-                    index + 1,
-                    `"${formatTimestamp(submission.timestamp, 'full')}"`,
-                    `"${submission.nama}"`,
-                    `"${submission.tingkat_pendidikan}"`,
-                    `"${submission.alamat.replace(/"/g, '""')}"`, 
-                    `"${submission.nomor_wa}"`,
-                    `"${submission.kategori}"`,
-                    `"${submission.reviewed ? 'Sudah Ditinjau' : 'Belum Ditinjau'}"`, 
-                    `"${submission.kartu_siswa ? submission.kartu_siswa.file_name : 'N/A'}"`,
-                    `"${submission.bukti_pembayaran ? submission.bukti_pembayaran.file_name : 'N/A'}"`,
-                    `"${submission.file_karya && submission.file_karya.file_name ? submission.file_karya.file_name : 'N/A'}"` 
-                ];
-                csv.push(row.join(';'));
+            const { data: linkData } = supabaseClient.storage
+                .from(BUCKET_NAME)
+                .getPublicUrl(path);
+                
+            const publicUrl = linkData.publicUrl;
+            
+            return `
+                <button 
+                    class="view-btn action-btn" 
+                    onclick="openFilePreview('${publicUrl}')"
+                    title="Buka Pratinjau ${label}"
+                >
+                    Lihat File
+                </button>
+            `;
+        };
+        
+        function showDetail(id) {
+            const pendaftar = allPendaftarData.find(p => p.id === id);
+            
+            if (!pendaftar) {
+                alert('Data pendaftar tidak ditemukan.');
+                return;
+            }
+            
+            const timeWIB = new Date(pendaftar.timestamp).toLocaleString('id-ID', {
+                day: 'numeric', month: 'short', year: 'numeric', 
+                hour: '2-digit', minute: '2-digit', second: '2-digit', 
+                timeZone: 'Asia/Jakarta'
             });
 
-            const csvContent = csv.join('\n');
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
+            document.getElementById('detail-id').textContent = ''; 
             
-            const filename = `Data_Pendaftar_${categoryName}_${new Date().toLocaleDateString('id-ID').replace(/\//g, '-')}.csv`;
+            document.getElementById('detail-kategori').textContent = pendaftar.kategori;
+            document.getElementById('detail-nama').textContent = pendaftar.nama;
+            document.getElementById('detail-pendidikan').textContent = pendaftar.tingkat_pendidikan;
+            document.getElementById('detail-wa').innerHTML = `<a href="https://wa.me/${pendaftar.nomor_wa}" target="_blank">${pendaftar.nomor_wa}</a>`;
+            document.getElementById('detail-waktu').textContent = timeWIB;
             
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+            document.getElementById('detail-bukti-bayar').innerHTML = createFileLink(pendaftar.bukti_bayar_path, 'Bayar');
+            document.getElementById('detail-kts-card').innerHTML = createFileLink(pendaftar.kts_path, 'Kartu');
+            document.getElementById('detail-file-karya').innerHTML = createFileLink(pendaftar.karya_path, 'Karya');
             
-            alert(`Data ${categoryName} berhasil diekspor ke ${filename}!`);
+            modalDeleteBtn.onclick = () => confirmDeleteFromModal(pendaftar);
+            
+            detailModal.style.display = 'block';
         }
 
-        document.addEventListener('DOMContentLoaded', fetchSubmissions);
+        function closeModal() {
+            detailModal.style.display = 'none';
+        }
+
+        function openFilePreview(url) {
+            if (url) {
+                window.open(url, '_blank');
+            } else {
+                console.error('URL file tidak ditemukan.');
+            }
+        }
+        
+        window.onclick = function(event) {
+            if (event.target === detailModal) {
+                closeModal();
+            }
+        }
+        
+        function confirmDeleteFromModal(pendaftar) {
+            const { id, bukti_bayar_path, kts_path, karya_path } = pendaftar;
+            
+            if (confirm(`Apakah Anda yakin ingin menghapus data pendaftar dengan ID: ${id}? Tindakan ini akan menghapus data di database dan file di storage!`)) {
+                
+                const rowElement = Array.from(pendaftaranBody.rows).find(row => {
+                    const pendaftarRow = allPendaftarData[row.rowIndex - 1]; 
+                    return pendaftarRow && pendaftarRow.id === id;
+                });
+                
+                closeModal();
+                deleteData(id, bukti_bayar_path, kts_path, karya_path, rowElement);
+            }
+        }
+
+        async function deleteData(id, bbPath, ktsPath, karyaPath, rowElement) {
+            if (rowElement) rowElement.style.backgroundColor = '#fce3e7'; 
+            
+            const filesToDelete = [bbPath, ktsPath, karyaPath].filter(p => p && p !== 'null');
+            
+            let storageError = null;
+            if (filesToDelete.length > 0) {
+                const { error: storageErr } = await supabaseClient.storage
+                    .from(BUCKET_NAME)
+                    .remove(filesToDelete); 
+
+                if (storageErr) {
+                    storageError = storageErr;
+                    console.error('Gagal menghapus file dari storage:', storageErr);
+                }
+            }
+            
+            const { error: dbError } = await supabaseClient
+                .from(TABLE_NAME)
+                .delete()
+                .eq('id', id);
+
+            if (dbError) {
+                console.error('Gagal menghapus data dari tabel:', dbError);
+                alert(`Gagal menghapus data pendaftar (ID ${id}) dari database: ${dbError.message}. Pastikan RLS Policy DELETE Anda benar.`);
+                if (rowElement) rowElement.style.backgroundColor = ''; 
+                return;
+            }
+
+            if (!dbError) {
+                if (rowElement) rowElement.remove();
+                
+                allPendaftarData = allPendaftarData.filter(p => p.id !== id);
+                jumlahData.textContent = allPendaftarData.length;
+                
+                fetchData();
+
+                let successMessage = `Data pendaftar ID ${id} berhasil dihapus.`;
+                if (storageError) successMessage += ` Peringatan: Gagal menghapus file di Storage.`;
+                alert(successMessage);
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            setupFilterButtons();
+            fetchData();
+        });
     </script>
 </body>
 </html>
