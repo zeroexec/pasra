@@ -5,363 +5,367 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PASRA - Lomba Karya Kreatif Santri 2026</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="icon" type="image/png" href="logo.png"> 
     
     <style>
         :root {
-            --color-primary: #1e8449; 
-            --color-secondary: #28a846; 
-            --color-text: #34495e; 
-            --color-background: #f4f6f9; 
+            --color-primary: #1e8449;
+            --color-secondary: #28a846;
+            --color-text: #34495e;
+            --color-background: #f4f6f9;
             --color-card-bg: #ffffff;
             --color-border: #e0e0e0;
             
             --color-status-success: #d4edda;
             --color-status-error: #f8d7da;
-            --color-status-warning: #fff3cd;
             --color-urgent-warning: #dc3545; 
-
-            --gradient-start: #1e8449; 
-            --gradient-end: #4a90e2;   
             
-            --header-height: 70px; 
-            --flush-padding: 20px; 
+            --header-height: 80px; 
         }
 
-        * { box-sizing: border-box; }
-        
+        body.modal-open {
+            overflow: hidden;
+        }
+
         html {
             scroll-behavior: smooth; 
         }
-
-        body { 
-            font-family: 'Poppins', sans-serif; 
-            padding: var(--header-height) 0 0 0; 
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--color-background);
+            color: var(--color-text);
             margin: 0;
-            background-color: var(--color-background); 
-            line-height: 1.6; 
-            color: var(--color-text); 
-            min-height: 100vh;
+            padding-top: 0; 
+        }
+
+        /* --- BANNER AREA MODIFIKASI --- */
+        #banner-area {
+            height: 500px; 
+            background-image: url('https://i.pinimg.com/1200x/11/07/86/1107866f9472fb8beb6ea6cc8eb822c2.jpg');
+            background-size: cover;
+            background-position: center;
+            border-radius: 0 0 12px 12px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            position: relative; 
             display: flex;
-            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+        
+        #banner-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4); 
+            z-index: 1;
+        }
+
+        .banner-logo-overlay {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 3; 
+            display: flex;
+            align-items: center;
+        }
+
+        .banner-logo-overlay img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 10px;
+            box-shadow: none;
+        }
+
+        .banner-logo-overlay span {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: white; 
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+            white-space: nowrap;
+        }
+        
+        .banner-text {
+            color: white;
+            z-index: 2;
+            padding: 20px;
+        }
+        
+        .banner-text h2 {
+            font-size: 3.5em;
+            font-weight: 900;
+            margin: 0 0 10px 0;
+            line-height: 1.1;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .banner-text p {
+            font-size: 1.6em;
+            font-weight: 500;
+            margin: 0;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        }
+        
+        @media (max-width: 768px) {
+            #banner-area {
+                height: 350px;
+            }
+            .banner-text h2 {
+                font-size: 2.5em;
+            }
+            .banner-text p {
+                font-size: 1.2em;
+            }
+            
+            .banner-logo-overlay {
+                top: 10px;
+                left: 10px;
+            }
+
+            .banner-logo-overlay img {
+                width: 40px;
+                height: 40px;
+            }
+
+            .banner-logo-overlay span {
+                font-size: 1.2em;
+            }
         }
 
         .container {
             max-width: 1200px;
-            margin: 0 auto;
+            margin: 20px auto;
             padding: 20px;
-            flex-grow: 1; 
         }
-        
-        .fixed-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: var(--header-height);
-            background-color: rgba(0, 0, 0, 0.7); 
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-            z-index: 1010;
-        }
-        .nav-container {
-            width: 100%; 
-            height: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0; 
-        }
-        .header-branding {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding-left: var(--flush-padding); 
-        }
-        .header-logo {
-            width: 40px; 
-            height: 40px;
-            border-radius: 50%; 
-            object-fit: cover;
-            border: none; /* PERUBAHAN: Menghapus garis luar */
-        }
-        .branding-text {
-            font-size: 1.1em;
-            font-weight: 700;
-            color: white; 
-            white-space: nowrap;
-        }
-        .nav-menu {
-            padding-right: var(--flush-padding); 
-        }
-        .nav-menu a {
-            color: white; 
-            text-decoration: none;
-            font-weight: 600;
-            margin-left: 20px;
-            padding: 5px 0;
-            transition: color 0.3s, border-bottom 0.3s;
-        }
-        .nav-menu a:hover {
-            color: var(--color-secondary);
-            border-bottom: 3px solid var(--color-secondary);
-        }
-        
-        #masthead { 
-            text-align: center; 
-            color: white; 
-            padding: 60px 20px; 
-            margin-top: -1px; 
-            margin-bottom: 30px; 
-            border-radius: 0 0 15px 15px; 
-            box-shadow: 0 6px 15px rgba(0,0,0,0.15); 
-            
-            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
-                        url('https://thumb.viva.co.id/media/frontend/thumbs3/2025/10/21/68f786faaeb04-ilustrasi-santri-mengaji_375_211.jpg');
-            background-size: cover;
-            background-position: center;
-        }
-        h1 { 
-            margin: 0; 
-            font-size: 2.8em; 
-            letter-spacing: 1px;
-            font-weight: 900;
-            line-height: 1.2;
-        }
-        .gradient-text {
-            background: linear-gradient(45deg, var(--gradient-start), var(--gradient-end));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            color: transparent;
-            display: inline-block;
-        }
-        
-        .countdown-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 25px;
-            padding: 0; 
-            max-width: fit-content;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        .countdown-style {
-            font-weight: 700;
-            font-size: 1.1em;
-            margin-bottom: 10px !important; 
-            color: white;
-            padding: 5px 10px; 
-            background-color: rgba(0, 0, 0, 0.3); 
-            border-radius: 5px;
-        }
-        .countdown-card-container {
-            display: flex;
-            justify-content: center;
-            gap: 12px; 
-            padding: 15px 25px; 
-            background-color: rgba(255,255,255,0.2); 
-            backdrop-filter: blur(3px);
-            border-radius: 10px;
-            border: 1px solid rgba(255,255,255,0.5);
-        }
-        .countdown-segment {
-            background-color: #f8f9fa; 
-            color: var(--color-text);
-            padding: 5px 10px; 
-            border-radius: 6px; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            min-width: 65px; 
+
+        #ketentuan-area h2 {
             text-align: center;
-            
-            display: flex; 
-            flex-direction: column; 
-            justify-content: space-between;
-            line-height: 1; 
+            color: var(--color-primary);
+            margin-bottom: 25px;
+            font-size: 2em;
         }
-        .countdown-segment .number {
-            font-size: 1.8em; 
-            font-weight: 900;
-            color: var(--gradient-end); 
-            line-height: 1;
-            padding-bottom: 3px; 
-            display: block;
-        }
-        .countdown-segment .label {
-            font-size: 0.7em; 
-            font-weight: 600;
-            color: #555;
-            text-transform: uppercase;
-            
-            border-top: 1px solid var(--color-border); 
-            padding-top: 3px; 
-            margin-top: 0; 
-            display: block;
-        }
-        
-        section { 
-            margin-bottom: 30px; 
-            padding: 30px; 
-            background-color: var(--color-card-bg); 
-            border-radius: 12px; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
-        }
-        h2 { 
-            color: var(--color-primary); 
-            border-bottom: 3px solid var(--color-secondary); 
-            padding-bottom: 10px; 
-            margin-top: 0; 
-            font-size: 1.8em;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        h2 svg {
-            stroke-width: 2.5;
-        }
-        h3 { 
-            color: var(--color-text); 
-            margin-top: 25px; 
-            border-left: 5px solid var(--color-secondary);
-            padding-left: 10px;
-            font-weight: 600;
-            font-size: 1.25em;
-        }
-        .warning { 
-            color: var(--color-urgent-warning); 
-            font-weight: bold; 
-        }
-        
-        .kategori-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
-            gap: 25px;
-            margin-top: 25px;
-        }
-        .kategori-item {
-            padding: 20px;
-            border: 1px solid var(--color-border);
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+
+        .ketentuan-card {
             background-color: var(--color-card-bg);
-            line-height: 1.4;
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.3s, box-shadow 0.3s;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin-bottom: 40px;
+            padding: 30px; 
         }
+        
+        .ketentuan-content {
+            width: 100%; 
+            padding: 0; 
+            box-sizing: border-box;
+        }
+        
+        .ketentuan-content h3 {
+            color: var(--color-secondary);
+            margin-top: 0;
+            border-bottom: 1px dashed var(--color-border);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .ketentuan-content ul {
+            padding-left: 20px;
+            font-size: 0.95em;
+            line-height: 1.8;
+        }
+        
+        #hadiah-content h2 {
+            text-align: center;
+            color: var(--color-primary);
+            margin-bottom: 25px;
+            font-size: 2em;
+        }
+        
+        .hadiah-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 0.95em;
+        }
+
+        .hadiah-table th, .hadiah-table td {
+            border: 1px solid var(--color-border);
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        .hadiah-table th {
+            background-color: var(--color-primary);
+            color: white;
+            font-weight: 700;
+        }
+
+        .hadiah-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        @media (max-width: 600px) {
+            .hadiah-table, .hadiah-table thead, .hadiah-table tbody, .hadiah-table th, .hadiah-table td, .hadiah-table tr {
+                display: block;
+            }
+            
+            .hadiah-table thead tr {
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+            
+            .hadiah-table td {
+                border: none;
+                border-bottom: 1px solid #eee;
+                position: relative;
+                padding-left: 50%;
+                text-align: right;
+            }
+            
+            .hadiah-table td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 6px;
+                width: 45%;
+                padding-right: 10px;
+                white-space: nowrap;
+                text-align: left;
+                font-weight: 600;
+                color: var(--color-primary);
+            }
+
+            .hadiah-table td:nth-of-type(1)::before { content: "Peringkat"; }
+            .hadiah-table td:nth-of-type(2)::before { content: "Hadiah"; }
+            .hadiah-table td:nth-of-type(3)::before { content: "Keterangan"; }
+        }
+
+        .countdown-timer {
+            text-align: center;
+            background-color: var(--color-urgent-warning);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+
+        .countdown-timer span {
+            font-size: 1.5em;
+            font-weight: 900;
+        }
+
+        .scroll-target {
+            padding-top: 15px; 
+            margin-top: -15px; 
+            display: block; 
+        }
+        
+        h1 {
+            color: var(--color-primary);
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        p.subtitle {
+            text-align: center;
+            color: #6c757d;
+            margin-bottom: 40px;
+        }
+
+        .kategori-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .kategori-item {
+            background-color: var(--color-card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            padding: 25px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-left: 5px solid var(--color-primary);
+            position: relative;
+        }
+
         .kategori-item:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
         }
-        .kategori-item h4 {
+
+        .kategori-item h3 {
+            color: var(--color-primary);
             margin-top: 0;
-            color: var(--color-primary); 
-            border-bottom: 2px solid var(--color-secondary);
-            padding-bottom: 5px;
-            font-size: 1.3em;
-            
+            font-size: 1.5em;
+            border-bottom: 2px dashed var(--color-border);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .kategori-item p {
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        .tombol-area {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end;
             align-items: center;
-            flex-wrap: nowrap;
+            margin-top: 20px;
         }
         
         .quota-badge {
-            font-size: 0.75em; 
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 4px;
             font-weight: 700;
-            padding: 4px 10px;
-            border-radius: 15px; 
-            white-space: nowrap;
-            transition: background-color 0.3s;
+            font-size: 0.8em;
+            text-transform: uppercase;
+            margin-right: auto;
         }
+
         .quota-badge.available {
+            background-color: var(--color-status-success);
+            color: var(--color-primary);
+        }
+
+        .quota-badge.full {
+            background-color: var(--color-status-error);
+            color: var(--color-urgent-warning);
+        }
+
+        .tombol-daftar-kategori {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.2s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
             background-color: var(--color-primary);
             color: white;
-            border: 1px solid var(--color-primary);
-        }
-        .quota-badge.full {
-            background-color: var(--color-urgent-warning);
-            color: white;
-            border: 1px solid var(--color-urgent-warning);
         }
 
-        .kategori-footer {
-            display: flex;
-            justify-content: flex-end; 
-            align-items: center;
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid var(--color-border);
-        }
-
-        .tombol-group {
-            display: flex;
-            gap: 10px; 
-        }
-
-        .tombol-base {
-            padding: 10px 18px; 
-            cursor: pointer; 
-            border: none; 
-            border-radius: 6px; 
-            font-weight: 600; 
-            text-transform: uppercase;
-            transition: background-color 0.3s, transform 0.2s;
-            white-space: nowrap; 
-            font-size: 0.9em;
-            text-decoration: none; /* added for anchor tags */
-            display: inline-block; /* added for anchor tags */
-            text-align: center; /* added for anchor tags */
-        }
-        .tombol-daftar-kategori { 
-            background-color: var(--color-primary); 
-            color: white; 
-        }
-        .tombol-daftar-kategori:hover:not(:disabled) { 
-            background-color: #1a7140; 
-            transform: translateY(-1px);
-        }
-        .tombol-daftar-kategori:disabled { 
-            background-color: #cccccc; 
-            cursor: not-allowed; 
-        }
-        .tombol-panduan {
-            background-color: var(--color-secondary); 
-            color: white; 
-        }
-        .tombol-panduan:hover { 
-            background-color: #238e3e; 
-            transform: translateY(-1px);
+        .tombol-daftar-kategori:hover:not(:disabled) {
+            background-color: #145b34;
         }
         
-        #ketentuan-ketentuan p {
-            font-weight: normal; 
-            font-style: normal; 
-            color: var(--color-text);
-            margin: 8px 0;
-            padding-left: 10px;
+        .tombol-daftar-kategori:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
         }
-        #ketentuan-ketentuan p strong {
-            font-weight: 700;
-            color: #1a7140; 
-        }
-        #ketentuan-ketentuan ul {
-            margin-top: 5px;
-            margin-bottom: 15px;
-            padding-left: 30px;
-        }
-        .kategori-item p {
-            margin-bottom: 15px; 
-            margin-top: 0;
-        }
-        .kategori-item p strong {
-            display: block; 
-            margin-bottom: 0px; 
-            margin-top: 10px;
-            color: var(--color-text);
-        }
-
         
         .modal-overlay {
             position: fixed;
@@ -369,597 +373,484 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
+            background-color: rgba(0, 0, 0, 0.6);
             display: none; 
             justify-content: center;
             align-items: center;
-            z-index: 1020; 
-            overflow-y: auto; 
-            padding: 20px 0;
+            z-index: 2000;
         }
+
         .modal-content {
             background-color: var(--color-card-bg);
             padding: 30px;
-            border-radius: 10px;
-            max-width: 600px;
+            border-radius: 12px;
             width: 90%;
+            max-width: 600px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
             position: relative;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            margin: auto; 
+            max-height: 90vh; 
+            overflow-y: auto;
         }
+
+        .modal-content h2 {
+            margin-top: 0;
+            border-bottom: 2px solid var(--color-primary);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            color: var(--color-primary);
+        }
+
         .close-button {
             position: absolute;
             top: 15px;
-            right: 25px;
-            color: #aaa;
-            font-size: 28px;
-            font-weight: bold;
-            transition: color 0.3s;
+            right: 15px;
+            font-size: 2em;
             cursor: pointer;
+            color: #999;
+            line-height: 1;
         }
-        .close-button:hover,
-        .close-button:focus {
-            color: var(--color-urgent-warning);
-        }
+        
         .form-group {
             margin-bottom: 15px;
         }
+
         .form-group label {
             display: block;
-            font-weight: 600;
             margin-bottom: 5px;
-            color: var(--color-text);
-            font-size: 0.95em;
+            font-weight: 600;
         }
+
         .form-group input[type="text"],
         .form-group input[type="file"],
         .form-group select {
             width: 100%;
             padding: 10px;
             border: 1px solid var(--color-border);
-            border-radius: 4px;
+            border-radius: 6px;
             box-sizing: border-box;
-            font-size: 1em;
-            transition: border-color 0.3s;
+            font-family: inherit;
         }
-        .form-group input:focus,
-        .form-group select:focus {
-            border-color: var(--color-secondary);
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(40, 168, 70, 0.2);
+        
+        .form-group .keterangan-file {
+             font-size: 0.8em;
+             color: #6c757d;
+             margin-top: 5px;
         }
+        
         .status {
             padding: 10px;
-            border-radius: 4px;
-            margin-top: 10px;
+            margin-top: 15px;
+            border-radius: 6px;
             font-weight: 600;
+            text-align: center;
         }
+
         .status.warning {
-            background-color: var(--color-status-warning);
+            background-color: #fff3cd;
             color: #856404;
         }
+
         .status.error {
-            background-color: var(--color-status-error);
-            color: var(--color-urgent-warning);
+            background-color: #f8d7da;
+            color: #dc3545;
         }
+
         .status.success {
-            background-color: var(--color-status-success);
+            background-color: #d4edda;
             color: var(--color-primary);
         }
-        /* Custom style for green text based on user request ("hijau") */
+        
         .hijau-teks {
-            color: var(--color-primary) !important; 
-            font-weight: 700 !important; 
+            color: var(--color-primary);
         }
         
-        footer { 
-            padding: 40px 20px; 
-            margin-top: 50px; 
-            border-top: 5px solid var(--color-secondary); 
-            background-color: var(--color-text); 
-            color: #ecf0f1; 
-            border-radius: 15px 15px 0 0; 
-            font-size: 0.95em;
-            position: relative; 
-        }
-        
-        .footer-content {
-            display: flex;
-            justify-content: space-around; 
-            gap: 40px;
-            max-width: 1200px;
-            margin: 0 auto;
+        footer {
+            background-color: black;
+            color: #c0c0c0;
+            padding: 40px 20px 20px;
+            margin-top: 50px;
+            border-top: none; 
+            font-size: 0.9em;
             text-align: left; 
         }
         
-        .footer-column {
-            flex: 1; 
-            min-width: 300px;
-        }
-
-        footer h2 {
-            color: white; 
-            border-bottom: 2px solid var(--color-secondary);
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-            font-size: 1.6em;
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
             display: flex;
-            justify-content: flex-start; 
-            align-items: center;
-        }
-        footer h2 svg {
-            margin-right: 10px;
+            justify-content: space-between;
+            flex-wrap: wrap; 
+            gap: 30px;
         }
 
-        .gradient-velion-text {
-            font-weight: 900;
+        .footer-column {
+            flex: 1;
+            min-width: 280px; 
+            padding-right: 20px;
+        }
+
+        .footer-column h4 {
+            color: white;
             font-size: 1.1em;
-            background: linear-gradient(45deg, var(--color-secondary), var(--gradient-end)); 
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            color: transparent;
-            display: inline-block;
+            font-weight: 700;
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--color-primary);
+            padding-bottom: 5px;
+        }
+
+        .footer-column p, .footer-column div {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .org-name {
+            color: var(--color-primary);
+            font-weight: 700;
+        }
+
+        .address-name {
+            font-weight: 700;
+            color: white;
         }
         
-        .website-service-button {
-            position: absolute;
-            right: 20px;
-            bottom: 20px;
-            padding: 8px 15px;
-            background-color: var(--color-secondary);
-            color: white;
-            text-decoration: none;
-            border-radius: 6px;
-            font-size: 0.85em;
-            font-weight: 700;
-            transition: background-color 0.3s, transform 0.2s;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-            border: 1px solid white;
-        }
-        .website-service-button:hover {
-            background-color: #238e3e;
-            transform: translateY(-1px);
+        .powered-by-name {
+            font-weight: 900;
+            font-size: 1.1em;
+            background: linear-gradient(90deg, #1e8449, #3498db); 
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
         }
 
-        @media (max-width: 700px) {
-            .fixed-header {
-                height: var(--header-height); 
-                padding: 0;
-            }
-            body {
-                padding-top: var(--header-height); 
-            }
-            .nav-container {
-                flex-direction: row; 
-                justify-content: space-between; 
-                align-items: center;
-                height: 100%;
-            }
-            .header-branding {
-                padding-left: var(--flush-padding); 
-                justify-content: flex-start;
-            }
-            .branding-text {
-                display: none; 
-            }
-            .header-logo {
-                border: none; /* PERUBAHAN: Menghapus garis luar di mobile */
-            }
-            .nav-menu {
-                display: flex;
-                flex-wrap: nowrap; 
-                justify-content: flex-end;
-                padding-right: var(--flush-padding); 
-            }
-            .nav-menu a {
-                margin-left: 8px; 
-                font-size: 0.8em; 
-                padding: 5px 0;
-            }
-            
+        .footer-bottom-link {
+            text-align: right;
+            padding-top: 15px;
+            border-top: 1px solid #333;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .footer-bottom-link a {
+            color: #3498db; 
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .footer-bottom-link a:hover {
+            color: var(--color-primary);
+        }
+
+        @media (max-width: 600px) {
             .footer-content {
                 flex-direction: column;
                 gap: 20px;
-                text-align: center;
-            }
-            footer h2 {
-                justify-content: center;
             }
             .footer-column {
-                min-width: unset;
+                min-width: 100%;
+                padding-right: 0;
             }
-            .website-service-button {
-                position: static; 
-                margin-top: 20px;
-                display: block;
-                width: 100%;
-                max-width: 250px;
-                margin-left: auto;
-                margin-right: auto;
-            }
-            
-            h1 {
-                font-size: 2em;
-            }
-            .countdown-card-container {
-                gap: 8px;
-                padding: 10px 15px;
-            }
-            .countdown-segment {
-                min-width: 45px;
-                padding: 5px 5px;
-            }
-            .countdown-segment .number {
-                font-size: 1.5em;
-            }
-            .countdown-segment .label {
-                font-size: 0.6em;
-            }
-            .kategori-item h4 {
-                flex-direction: column; 
-                align-items: flex-start;
-                line-height: 1.2;
-            }
-            .quota-badge {
-                margin-top: 5px; 
+            .footer-bottom-link {
+                text-align: left; 
             }
         }
+
     </style>
 </head>
 <body>
 
-    <header class="fixed-header">
-        <div class="nav-container">
-            <div class="header-branding">
-                <img src="logo.png" alt="Logo PASRA" class="header-logo">
-                <span class="branding-text"><strong>PERSATUAN SANTRI GAPURA</strong></span>
-            </div>
-            <nav class="nav-menu">
-                <a href="#ketentuan-ketentuan">Ketentuan</a>
-                <a href="#juknis-lomba">Kategori Lomba</a>
-                <a href="#fasilitas-hadiah">Hadiah</a>
-            </nav>
+    <div id="banner-area">
+        <div class="banner-logo-overlay">
+            <img src="logo.png" alt="Logo Persatuan Santri Gapura">
+            <span>Persatuan Santri Gapura</span>
         </div>
-    </header>
 
-    <section id="masthead">
-        <h1 class="gradient-text">Lomba Karya Kreatif Santri 2026</h1>
-        
-        <div class="countdown-wrapper">
-             <p class="countdown-style">Tutup Pendaftaran dalam</p>
-             <div id="countdown-timer" class="countdown-card-container">
-             </div>
+        <div class="banner-text">
+            <h2>LOMBA KARYA KREATIF SANTRI 2026</h2>
+            <p>PASRA - Wujudkan Kreativitas Tanpa Batas</p>
         </div>
-        
-    </section>
+    </div>
 
     <div class="container">
         
-        <section id="ketentuan-ketentuan">
-            <h2>
-                <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="min-width: 20px;"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
-                Ketentuan-Ketentuan Pendaftaran
-            </h2>
-            <p><strong>Tanggal Pendaftaran:</strong> 20 Desember 2026 - 26 Februari 2026</p>
-            <p><strong>Peringatan Penting:</strong> Semua peserta wajib mengunggah Kartu Siswa (KTS/ID Card) dan Bukti Pembayaran.</p>
+        <span class="scroll-target" id="main-title"></span>
+        <h1>Ketentuan Lomba</h1>
+
+        <div id="countdown-area" class="countdown-timer" style="display: none;">
+            Pendaftaran akan dibuka dalam: <span id="countdown"></span>
+        </div>
             
-            <h3>Persyaratan Umum:</h3>
-            <ul>
-                <li>Peserta adalah santri aktif dari satuan pendidikan yang terdaftar.</li>
-                <li>Karya harus orisinal, belum pernah diikutsertakan, dan tidak mengandung unsur SARA.</li>
-            </ul>
-        </section>
-        
-        <section id="juknis-lomba">
-            <h2>
-                <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="min-width: 20px;"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 0 3-3h7z"/></svg>
-                Petunjuk Teknis Lomba & Kuota Detail Kategori
-            </h2>
+            <div class="ketentuan-card">
+                <div class="ketentuan-content" id="ketentuan-detail">
+                    <h3>Aturan Utama Peserta</h3>
+                    <ul>
+                        <li>Peserta harus merupakan pelajar aktif (SLTP/SLTA/Mahasiswa) dari pondok pesantren/sekolah yang berdomisili di Pulau Madura.</li>
+                        <li>Setiap peserta hanya boleh mendaftar pada maksimal dua kategori lomba.</li>
+                        <li>Karya harus orisinal, belum pernah dipublikasikan, dan tidak mengandung unsur SARA atau provokasi.</li>
+                        <li>Keputusan juri bersifat mutlak dan tidak dapat diganggu gugat.</li>
+                        <li>File yang diunggah wajib berukuran maksimal 5 MB. Vidio 20 MB</li>
+                        <li>Pendaftaran ditutup jika kuota kategori sudah penuh.</li>
+                    </ul>
+                    
+                    <h3>Dokumen yang Diperlukan</h3>
+                    <ul>
+                        <li>Kartu Tanda Siswa (KTS) / ID Card Pelajar / Surat Domisili (PDF/JPG/PNG).</li>
+                        <li>Bukti Pembayaran Pendaftaran (PDF/JPG/PNG).</li>
+                        <li>File Karya sesuai kategori (Naskah: DOCX/DOC; Video: MP4/AVI/MOV/MKV).</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <span class="scroll-target" id="hadiah-area"></span>
+        <div id="hadiah-content">
+            <h2>Hadiah Lomba</h2>
             
-            <div class="kategori-list">
+            <div class="ketentuan-card">
+                <h3>Hadiah Utama</h3>
+                <p style="font-weight: 600;">Untuk Juara 1, 2, dan 3 per Kategori:</p>
                 
-                <div class="kategori-item" data-kategori="puisi" data-accept=".docx,.doc">
-                    <div>
-                        <h4>
-                            Puisi
-                            <span class="quota-badge" id="status-puisi"></span> 
-                        </h4>
-                        <p><strong>Ketentuan File Karya</strong></p>
-                        <p style="margin-top: -10px;">Naskah orisinal, maks. 500 kata.</p>
-                        <p><strong>Format File</strong></p>
-                        <p style="margin-top: -10px;">.docx / .doc (Wajib)</p>
-                        <p><strong>Metode Pengiriman</strong></p>
-                        <p style="margin-top: -10px;">Unggah Karya, KTS, & Bukti Bayar</p>
+                <table class="hadiah-table">
+                    <thead>
+                        <tr>
+                            <th>Peringkat</th>
+                            <th>Hadiah</th>
+                            <th>Keterangan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td data-label="Peringkat">Juara 1</td>
+                            <td data-label="Hadiah">Uang Tunai (Rp 1.000.000)</td>
+                            <td data-label="Keterangan">Sertifikat + Piala Eksklusif</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Peringkat">Juara 2</td>
+                            <td data-label="Hadiah">Uang Tunai (Rp 750.000)</td>
+                            <td data-label="Keterangan">Sertifikat + Medali</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Peringkat">Juara 3</td>
+                            <td data-label="Hadiah">Uang Tunai (Rp 500.000)</td>
+                            <td data-label="Keterangan">Sertifikat + Medali</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3 style="margin-top: 30px;">Hadiah Tambahan</h3>
+                <ul>
+                    <li>Semua peserta mendapatkan **E-Sertifikat** partisipasi.</li>
+                    <li>10 finalis terbaik per kategori akan mendapatkan merchandise eksklusif dari panitia.</li>
+                    <li>Beberapa karya terpilih akan dipublikasikan di jurnal organisasi.</li>
+                </ul>
+            </div>
+        </div>
+        <span class="scroll-target" id="kategori-area"></span>
+        <div id="kategori-content">
+            <h2 style="text-align: center; color: var(--color-primary); font-size: 2em; margin-bottom: 25px;">Pilihan Kategori Lomba</h2>
+
+            <div class="kategori-grid">
+                
+                <div class="kategori-item" data-kategori="puisi" data-accept=".doc,.docx">
+                    <h3>Puisi</h3>
+                    <p>Karya orisinal dalam bentuk puisi dengan tema bebas.</p>
+                    <div class="tombol-area">
+                        <span id="status-puisi" class="quota-badge available">50 KUOTA</span>
+                        <div>
+                            <button class="tombol-daftar-kategori">Daftar Lomba</button>
+                        </div>
                     </div>
-                    <div class="kategori-footer">
-                        <div class="tombol-group">
-                            <button class="tombol-base tombol-panduan" data-kategori="puisi">Panduan</button>
-                            <button class="tombol-base tombol-daftar-kategori" onclick="tampilkanForm('puisi', '.docx,.doc')">Daftar Lomba</button>
+                </div>
+
+                <div class="kategori-item" data-kategori="esai" data-accept=".doc,.docx">
+                    <h3>Esai Ilmiah</h3>
+                    <p>Menulis esai ilmiah yang mengangkat isu sosial atau teknologi.</p>
+                    <div class="tombol-area">
+                        <span id="status-esai" class="quota-badge available">50 KUOTA</span>
+                        <div>
+                            <button class="tombol-daftar-kategori">Daftar Lomba</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="kategori-item" data-kategori="cerpen" data-accept=".doc,.docx">
+                    <h3>Cerpen</h3>
+                    <p>Karya fiksi pendek dengan mengangkat tema lokal Madura.</p>
+                    <div class="tombol-area">
+                        <span id="status-cerpen" class="quota-badge available">50 KUOTA</span>
+                        <div>
+                            <button class="tombol-daftar-kategori">Daftar Lomba</button>
                         </div>
                     </div>
                 </div>
                 
-                <div class="kategori-item" data-kategori="esai" data-accept=".docx,.doc">
-                    <div>
-                        <h4>
-                            Esai
-                            <span class="quota-badge" id="status-esai"></span> 
-                        </h4>
-                        <p><strong>Ketentuan File Karya</strong></p>
-                        <p style="margin-top: -10px;">Naskah orisinal, maks. 1500 kata.</p>
-                        <p><strong>Format File</strong></p>
-                        <p style="margin-top: -10px;">.docx / .doc (Wajib)</p>
-                        <p><strong>Metode Pengiriman</strong></p>
-                        <p style="margin-top: -10px;">Unggah Karya, KTS, & Bukti Bayar</p>
-                    </div>
-                    <div class="kategori-footer">
-                        <div class="tombol-group">
-                            <button class="tombol-base tombol-panduan" data-kategori="esai">Panduan</button>
-                            <button class="tombol-base tombol-daftar-kategori" onclick="tampilkanForm('esai', '.docx,.doc')">Daftar Lomba</button>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="kategori-item" data-kategori="cerpen" data-accept=".docx,.doc">
-                    <div>
-                        <h4>
-                            Cerpen
-                            <span class="quota-badge" id="status-cerpen"></span> 
-                        </h4>
-                        <p><strong>Ketentuan File Karya</strong></p>
-                        <p style="margin-top: -10px;">Naskah orisinal, maks. 2000 kata.</p>
-                        <p><strong>Format File</strong></p>
-                        <p style="margin-top: -10px;">.docx / .doc (Wajib)</p>
-                        <p><strong>Metode Pengiriman</strong></p>
-                        <p style="margin-top: -10px;">Unggah Karya, KTS, & Bukti Bayar</p>
-                    </div>
-                    <div class="kategori-footer">
-                        <div class="tombol-group">
-                            <button class="tombol-base tombol-panduan" data-kategori="cerpen">Panduan</button>
-                            <button class="tombol-base tombol-daftar-kategori" onclick="tampilkanForm('cerpen', '.docx,.doc')">Daftar Lomba</button>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="kategori-item" data-kategori="vidiografi" data-accept="video/*">
-                    <div>
-                        <h4>
-                            Vidiografi
-                            <span class="quota-badge" id="status-vidiografi"></span> 
-                        </h4>
-                        <p><strong>Ketentuan File Karya</strong></p>
-                        <p style="margin-top: -10px;">Video orisinal, maks. 5 menit.</p>
-                        <p><strong>Format File</strong></p>
-                        <p style="margin-top: -10px;">.mp4, .mov (Wajib)</p>
-                        <p><strong>Metode Pengiriman</strong></p>
-                        <p style="margin-top: -10px;">Unggah Karya, KTS, & Bukti Bayar</p>
-                    </div>
-                    <div class="kategori-footer">
-                        <div class="tombol-group">
-                            <button class="tombol-base tombol-panduan" data-kategori="vidiografi">Panduan</button>
-                            <button class="tombol-base tombol-daftar-kategori" onclick="tampilkanForm('vidiografi', 'video/*')">Daftar Lomba</button>
+                <div class="kategori-item" data-kategori="vidiografi" data-accept=".mp4,.avi,.mov,.mkv">
+                    <h3>Vidiografi</h3>
+                    <p>Lomba membuat konten video kreatif berdurasi pendek.</p>
+                    <div class="tombol-area">
+                        <span id="status-vidiografi" class="quota-badge available">50 KUOTA</span>
+                        <div>
+                            <button class="tombol-daftar-kategori">Daftar Lomba</button>
                         </div>
                     </div>
                 </div>
                 
                 <div class="kategori-item" data-kategori="bacapuisi" data-accept="none">
-                    <div>
-                        <h4>
-                            Baca Puisi
-                            <span class="quota-badge" id="status-bacapuisi"></span> 
-                        </h4>
-                        <p><strong>Ketentuan File Karya</strong></p>
-                        <p style="margin-top: -10px;">(Hanya Pendaftaran/Administrasi). **Wajib menggunakan salah satu dari 3 naskah yang disediakan.**</p>
-                        <p><strong>Format File</strong></p>
-                        <p style="margin-top: -10px;">Tidak ada file karya</p>
-                        <p><strong>Metode Pengiriman</strong></p>
-                        <p style="margin-top: -10px;">Unggah Hanya KTS & Bukti Bayar</p>
-                    </div>
-                    <div class="kategori-footer">
-                        <div class="tombol-group">
-                            <button class="tombol-base tombol-panduan" data-kategori="bacapuisi">Panduan</button>
-                            <button class="tombol-base tombol-daftar-kategori" onclick="tampilkanForm('bacapuisi', 'none')">Daftar Lomba</button>
+                    <h3>Baca Puisi</h3>
+                    <p>Penampilan pembacaan puisi yang akan dilaksanakan secara online.</p>
+                    <div class="tombol-area">
+                        <span id="status-bacapuisi" class="quota-badge available">50 KUOTA</span>
+                        <div>
+                            <button class="tombol-daftar-kategori">Daftar Lomba</button>
                         </div>
                     </div>
                 </div>
                 
                 <div class="kategori-item" data-kategori="dai_madura" data-accept="none">
-                    <div>
-                        <h4>
-                            Da'i Bahasa Madura
-                            <span class="quota-badge" id="status-dai_madura"></span> 
-                        </h4>
-                        <p><strong>Ketentuan File Karya</strong></p>
-                        <p style="margin-top: -10px;">(Hanya Pendaftaran/Administrasi)</p>
-                        <p><strong>Format File</strong></p>
-                        <p style="margin-top: -10px;">Tidak ada file karya</p>
-                        <p><strong>Metode Pengiriman</strong></p>
-                        <p style="margin-top: -10px;">Unggah Hanya KTS & Bukti Bayar</p>
-                    </div>
-                    <div class="kategori-footer">
-                        <div class="tombol-group">
-                            <button class="tombol-base tombol-panduan" data-kategori="dai_madura">Panduan</button>
-                            <button class="tombol-base tombol-daftar-kategori" onclick="tampilkanForm('dai_madura', 'none')">Daftar Lomba</button>
+                    <h3>Da'i Madura</h3>
+                    <p>Lomba pidato bertema keagamaan menggunakan Bahasa Madura.</p>
+                    <div class="tombol-area">
+                        <span id="status-dai_madura" class="quota-badge available">50 KUOTA</span>
+                        <div>
+                            <button class="tombol-daftar-kategori">Daftar Lomba</button>
                         </div>
                     </div>
                 </div>
-                
+
             </div>
-            
-        </section>
-        
-        <section id="fasilitas-hadiah">
-            <h2>
-                <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="min-width: 20px;"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14v10"/><path d="M14 14v10"/><path d="M12 2a5 5 0 0 0-5 5v3h10V7a5 5 0 0 0-5-5z"/></svg>
-                Fasilitas dan Hadiah Lomba
-            </h2>
-
-            <h3>Fasilitas Peserta (Semua Kategori)</h3>
-            <ul>
-                <li><strong>E-Sertifikat Kepesertaan</strong> untuk seluruh pendaftar yang memenuhi syarat.</li>
-                <li><strong>Relasi dan Networking</strong> dengan sesama santri kreatif se-Indonesia.</li>
-                <li>Kesempatan mengikuti sesi <strong>Mentoring Eksklusif</strong> (terbatas).</li>
-            </ul>
-
-            <h3>Hadiah Pemenang (Setiap Kategori)</h3>
-            <p>Akan dipilih Juara I, II, dan III untuk masing-masing kategori lomba.</p>
-            
-            <div style="margin-left: 20px;">
-                <h4>Juara I:</h4>
-                <ul>
-                    <li>Uang Tunai (Rp 1.000.000)</li>
-                    <li>Piala Eksklusif</li>
-                    <li>Sertifikat Juara</li>
-                </ul>
-                <h4>Juara II:</h4>
-                <ul>
-                    <li>Uang Tunai (Rp 750.000)</li>
-                    <li>Piala Eksklusif</li>
-                    <li>Sertifikat Juara</li>
-                </ul>
-                <h4>Juara III:</h4>
-                <ul>
-                    <li>Uang Tunai (Rp 500.000)</li>
-                    <li>Piala Eksklusif</li>
-                    <li>Sertifikat Juara</li>
-                </ul>
-            </div>
-        </section>
-
-        <hr style="border: 0; border-top: 1px solid var(--color-border); margin: 30px 0;">
-
-    </div> 
-
-    <div id="modal-pendaftaran" class="modal-overlay" onclick="if(event.target.id === 'modal-pendaftaran') tutupModal()">
-        <div class="modal-content">
-            <span class="close-button" onclick="tutupModal()">&times;</span>
-            
-            <section id="form-pendaftaran" class="form-section">
-                <h3 id="judul-form" style="margin-top: 0; color: var(--color-primary);">Formulir Pendaftaran [Kategori]</h3>
-                <form onsubmit="kirimPendaftaran(event)">
-                    
-                    <div id="puisi-download-section" style="display: none; margin-bottom: 25px; padding: 15px; border: 1px dashed var(--color-secondary); border-radius: 8px; text-align: center;">
-                        <p style="font-weight: 600; color: var(--color-primary); margin-top: 0;">Unduh Naskah Puisi Pilihan (Wajib Digunakan untuk Baca Puisi):</p>
-                        <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
-                            <a href="https://drive.google.com/uc?export=download&id=GD_PUISI_1_ID_ASLI" target="_blank" class="tombol-base" style="background-color: #5bc0de; color: white; font-size: 0.85em;">Puisi 1 (Download)</a>
-                            <a href="https://drive.google.com/uc?export=download&id=GD_PUISI_2_ID_ASLI" target="_blank" class="tombol-base" style="background-color: #5bc0de; color: white; font-size: 0.85em;">Puisi 2 (Download)</a>
-                            <a href="https://drive.google.com/uc?export=download&id=GD_PUISI_3_ID_ASLI" target="_blank" class="tombol-base" style="background-color: #5bc0de; color: white; font-size: 0.85em;">Puisi 3 (Download)</a>
-                        </div>
-                        <p style="font-size: 0.8em; text-align: center; margin-bottom: 0; margin-top: 10px; color: var(--color-text);">Pilih salah satu naskah di atas untuk dibacakan.</p>
-                    </div>
-                    <div class="form-group"><label>Nama Lengkap</label><input type="text" name="nama" required></div>
-                    <div class="form-group"><label>Alamat</label><input type="text" name="alamat" required></div>
-                    <div class="form-group">
-                        <label>Tingkat Pendidikan</label>
-                        <select name="tingkat_pendidikan" required>
-                            <option value="">-- Pilih Tingkat --</option>
-                            <option value="SLTP (SMP/Sederajat)">SLTP (SMP/Sederajat)</option>
-                            <option value="SLTA (SMA/Sederajat)">SLTA (SMA/Sederajat)</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group"><label>Nomor WhatsApp (Aktif)</label><input type="text" name="nomor_wa" required></div>
-                    
-                    <div class="form-group">
-                        <label>Unggah Gambar Kartu Tanda Siswa<br><span class="hijau-teks">Wajib | Maks. 5MB</span></label>
-                        <input type="file" name="id_card" accept=".jpg,.png" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Unggah Gambar Bukti Pembayaran<br><span class="hijau-teks">Wajib | Maks. 5MB</span></label>
-                        <input type="file" name="bukti_bayar" accept=".jpg,.png" required>
-                    </div>
-                    
-                    <div class="form-group" id="file-karya-group">
-                        <label id="label-file-karya">Unggah File Karya</label>
-                        <input type="file" id="input-file-karya" name="file_karya" required>
-                        <input type="hidden" name="kategori_terpilih" id="kategori_terpilih">
-                    </div>
-
-                    <div class="form-group"><button class="tombol-base" type="submit">Kirim Pendaftaran & Karya</button></div>
-                    <p id="status-pendaftaran" class="status"></p>
-                </form>
-            </section>
-
         </div>
     </div>
     
+    <div id="modal-pendaftaran" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-button" onclick="tutupModal()">&times;</span>
+            <h2 id="judul-form">Formulir Pendaftaran</h2>
+
+            <div id="form-pendaftaran">
+                <form onsubmit="kirimPendaftaran(event)">
+                    <input type="hidden" id="kategori_terpilih" name="kategori_terpilih" required>
+                    
+                    <div class="form-group">
+                        <label for="nama">Nama Lengkap</label>
+                        <input type="text" id="nama" name="nama" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="alamat">Alamat (Sesuai KTP/KK/Surat Domisili)</label>
+                        <input type="text" id="alamat" name="alamat" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="tingkat_pendidikan">Tingkat Pendidikan</label>
+                        <select id="tingkat_pendidikan" name="tingkat_pendidikan" required>
+                            <option value="">Pilih Tingkat</option>
+                            <option value="SLTP">SLTP (SMP/MTs)</option>
+                            <option value="SLTA">SLTA (SMA/SMK/MA)</option>
+                            <option value="Mahasiswa">Mahasiswa</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="nomor_wa">Nomor WhatsApp Aktif</label>
+                        <input type="text" id="nomor_wa" name="nomor_wa" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="id_card">Unggah File KTS/ID Card/Bukti Pelajar <strong class="hijau-teks">(.pdf, .jpg, .png)</strong></label>
+                        <input type="file" id="id_card" name="id_card" accept=".pdf,.jpg,.jpeg,.png" required>
+                        <div class="keterangan-file">Wajib | Maksimal 5 MB</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bukti_bayar">Unggah File Bukti Pembayaran <strong class="hijau-teks">(.pdf, .jpg, .png)</strong></label>
+                        <input type="file" id="bukti_bayar" name="bukti_bayar" accept=".pdf,.jpg,.jpeg,.png" required>
+                        <div class="keterangan-file">Wajib | Maksimal 5 MB</div>
+                    </div>
+                    
+                    <div id="file-karya-group" class="form-group">
+                        <label id="label-file-karya" for="input-file-karya">Unggah File Karya</label>
+                        <input type="file" id="input-file-karya" name="input-file-karya" required>
+                        <div class="keterangan-file">Wajib | Maksimal 5 MB</div>
+                    </div>
+                    
+                    <div id="puisi-download-section" class="form-group" style="display: none;">
+                        <p class="keterangan-file">Untuk kategori Baca Puisi, Puisi Wajib diunduh di <a href="URL_DOWNLOAD_PUISI_WAJIB" target="_blank" class="hijau-teks">sini</a>.</p>
+                    </div>
+
+                    <button type="submit" class="tombol-daftar-kategori" style="width: 100%; margin-top: 20px;">Kirim Pendaftaran</button>
+                    
+                    <div id="status-pendaftaran" class="status"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <footer>
         <div class="footer-content">
             
             <div class="footer-column">
-                <h2>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="min-width: 20px;"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-                    Tentang Kami
-                </h2>
-                <p><strong>Organisasi Persatuan Santri Gapura (PASRA)</strong> adalah wadah resmi bagi santri-santri yang bersemangat dalam pengembangan diri di luar kurikulum pendidikan formal. Didirikan pada tahun 2020, PASRA bertujuan untuk memfasilitasi dan menginspirasi santri di berbagai bidang seni, literasi, dan teknologi.</p>
-                <p>Melalui kegiatan Lomba Karya Kreatif Santri ini, kami berharap dapat menumbuhkan jiwa kompetisi yang sehat, mendorong kreativitas orisinal, dan menciptakan ekosistem kolaboratif di antara generasi muda Islam di seluruh negeri.</p>
-                <p style="font-style: italic; margin-top: 20px;">Kami menyambut semua santri untuk bergabung dan berkarya!</p>
-                
+                <h4>Tentang Organisasi</h4>
+                <p>Persatuan Santri Gapura (PASRA) adalah sebuah wadah perkumpulan pelajar dan santri yang berfokus pada pengembangan kreativitas dan inovasi di bidang seni, sastra, dan teknologi di lingkungan pesantren Madura.</p>
+                <p>Kami berkomitmen untuk mendorong lahirnya karya-karya orisinal yang berlandaskan nilai-nilai agama dan kearifan lokal.</p>
             </div>
             
-            <div class="footer-column">
-                 <h2>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="min-width: 20px;"><path d="M3 15v4c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2v-4"/><path d="M17 9l-5 5-5-5"/><path d="M12 12V3"/></svg>
-                    Informasi Penyelenggara
-                </h2>
-                <p>Lomba ini diselenggarakan oleh <strong>Persatuan Santri Gapura (PASRA)</strong>.</p>
-                <p><strong>Lokasi Pusat:</strong> PP. Annuqayah Daerah Lubangsa.</p>
-                <p style="margin-top: 30px;">
-                    Powered by <span class="gradient-velion-text">Velion</span>
-                </p>
-                <p style="font-size: 0.85em;">&copy; 2026 PASRA. Hak Cipta Dilindungi.</p>
-            </div>
+            <div class="footer-column" style="position: relative;">
+                <h4>Keterangan</h4>
+                
+                <div>
+                    Diselenggarakan oleh: 
+                    <span class="org-name">Persatuan Santri Gapura</span>
+                </div>
+                
+                <div>
+                    Alamat Kantor:
+                    <span class="address-name">PP. Annuqayah Lubangsa</span>
+                </div>
+                
+                <div>
+                    Powered By:
+                    <span class="powered-by-name">Velion</span>
+                </div>
 
+                <p style="margin-top: 20px; font-size: 0.85em;">&copy; 2026 PASRA - Hak Cipta Dilindungi.</p>
+                
+                <div class="footer-bottom-link">
+                    <a href="http://zeroexec.github.io/chat/" target="_blank">Click Here To Make a Site</a>
+                </div>
+            </div>
+            
         </div>
-        
-        <a href="https://zeroexec.github.io/chat/" target="_blank" class="website-service-button">Website Service</a>
     </footer>
 
-    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyB-kiGFrRI3GMfW7DT2Dt7DmpDBsFNkE", 
-            databaseURL: "https://mysite-98643-default-rtdb.firebaseio.com",
-        };
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-        const rtdbRefSubmissions = database.ref('submissions_pasra');
+        const SUPABASE_URL = 'https://kerltwgefpeqjicsxupo.supabase.co'; 
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtlcmx0d2dlZnBlcWppY3N4dXBvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0MTk3ODAsImV4cCI6MjA4MDk5NTc4MH0.86-Cl6cSe6OxhCzvI8qVOuZrAyS-UTi7RphMD2KEOX0'; 
         
-        const MAX_SIZE_BASE64 = 5242880; 
+        const BUCKET_NAME = 'pasra-lomba'; 
+        const TABLE_NAME = 'pendaftaran';
 
-        // Kuota diset 50 untuk semua kategori
-        let QUOTAS = {
-            'puisi': 50,
-            'esai': 50,
-            'cerpen': 50,
-            'vidiografi': 50,
-            'bacapuisi': 50,
-            'dai_madura': 50 
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        const MAX_FILE_SIZE = 20971520; 
+
+        var QUOTAS = {
+            'puisi': 50, 'esai': 50, 'cerpen': 50, 'vidiografi': 50, 
+            'bacapuisi': 50, 'dai_madura': 50 
         };
         
-        const JUKNIS_URLS = {
-            'puisi': 'https://docs.google.com/document/d/Puisi-Juknis-Placeholder',
-            'esai': 'https://docs.google.com/document/d/Esai-Juknis-Placeholder',
-            'cerpen': 'https://docs.google.com/document/d/Cerpen-Juknis-Placeholder',
-            'vidiografi': 'https://docs.google.com/document/d/Vidiografi-Juknis-Placeholder',
-            'bacapuisi': 'https://docs.google.com/document/d/BacaPuisi-Juknis-Placeholder',
-            'dai_madura': 'https://docs.google.com/document/d/DaiMadura-Juknis-Placeholder' 
-        };
-
         function tampilkanModal() {
             document.getElementById('modal-pendaftaran').style.display = 'flex';
+            document.body.classList.add('modal-open'); 
         }
 
         function tutupModal() {
             document.getElementById('modal-pendaftaran').style.display = 'none';
             document.getElementById('status-pendaftaran').textContent = '';
             document.getElementById('status-pendaftaran').className = 'status';
+            document.body.classList.remove('modal-open'); 
         }
-
+        
         function updateQuotaDisplay() {
             const detailItems = document.querySelectorAll('.kategori-item[data-kategori]');
             detailItems.forEach(item => {
@@ -976,7 +867,6 @@
                         button.textContent = 'Kuota Penuh';
                         button.style.backgroundColor = '#6c757d';
                     } else {
-                        // Mengubah 'SLOT' menjadi 'KUOTA'
                         quotaBadge.textContent = `${kuota} KUOTA`; 
                         quotaBadge.className = 'quota-badge available'; 
                         button.disabled = false;
@@ -988,53 +878,14 @@
         }
         
         function startCountdown() {
-            const deadline = new Date("Feb 26, 2026 00:00:00").getTime();
-            const countdownEl = document.getElementById('countdown-timer');
-            const tombolDaftar = document.querySelectorAll('.tombol-daftar-kategori'); 
-
-            const interval = setInterval(function() {
-                const now = new Date().getTime();
-                const distance = deadline - now;
-
-                if (distance < 0) {
-                    clearInterval(interval);
-                    
-                    const wrapper = document.getElementById('countdown-timer').closest('.countdown-wrapper');
-                    wrapper.innerHTML = "<span class='countdown-style'>Pendaftaran Sudah Ditutup</span><div class='countdown-card-container' style='background-color: rgba(0, 0, 0, 0.4);'><span style='color:#ffc107; font-weight:bold; display:block; padding:10px;'>SUDAH DITUTUP</span></div>";
-                    
-                    tombolDaftar.forEach(button => {
-                        button.disabled = true;
-                        button.textContent = 'Pendaftaran Ditutup';
-                        button.style.backgroundColor = '#6c757d';
-                    });
-                } else {
-                    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-                    
-                    countdownEl.innerHTML = 
-                        `<div class="countdown-segment"><span class="number">${days}</span><span class="label">HARI</span></div>` +
-                        `<div class="countdown-segment"><span class="number">${hours}</span><span class="label">JAM</span></div>` +
-                        `<div class="countdown-segment"><span class="number">${minutes}</span><span class="label">MENIT</span></div>` +
-                        `<div class="countdown-segment"><span class="number">${seconds}</span><span class="label">DETIK</span></div>`;
-                }
-            }, 1000);
+            const countdownArea = document.getElementById('countdown-area');
+            countdownArea.style.display = 'none';
         }
-
+        
         function tampilkanForm(kategori, accept_file) {
-            const kuotaSaatIni = QUOTAS[kategori];
+            const kuotaSaatIni = QUOTAS[kategori]; 
             const formElement = document.getElementById('form-pendaftaran').querySelector('form');
-            const judulForm = document.getElementById('judul-form');
-            const fileKaryaGroup = document.getElementById('file-karya-group');
-            const inputFileKarya = document.getElementById('input-file-karya');
-            const labelFileKarya = document.getElementById('label-file-karya');
-            const kategoriTerpilih = document.getElementById('kategori_terpilih');
             const submitButton = formElement.querySelector('button[type="submit"]');
-            
-            // Dapatkan elemen bagian download puisi
-            const puisiDownloadSection = document.getElementById('puisi-download-section');
 
             if (kuotaSaatIni <= 0) {
                 alert('Mohon maaf, kuota untuk kategori ' + kategori.toUpperCase() + ' sudah penuh.');
@@ -1043,17 +894,22 @@
             }
             
             submitButton.disabled = false;
+            
+            const judulForm = document.getElementById('judul-form');
+            const fileKaryaGroup = document.getElementById('file-karya-group');
+            const inputFileKarya = document.getElementById('input-file-karya');
+            const labelFileKarya = document.getElementById('label-file-karya');
+            const kategoriTerpilih = document.getElementById('kategori_terpilih');
+            const puisiDownloadSection = document.getElementById('puisi-download-section');
 
             judulForm.textContent = 'Formulir Pendaftaran ' + kategori.toUpperCase();
             kategoriTerpilih.value = kategori;
-            
-            // LOGIC BARU: Menampilkan bagian download puisi HANYA untuk BACA PUISI
+
             if (kategori === 'bacapuisi') { 
                 puisiDownloadSection.style.display = 'block';
             } else {
                 puisiDownloadSection.style.display = 'none';
             }
-
 
             if (kategori === 'bacapuisi' || kategori === 'dai_madura') { 
                 fileKaryaGroup.style.display = 'none';
@@ -1064,151 +920,143 @@
                 inputFileKarya.setAttribute('required', 'required');
                 inputFileKarya.setAttribute('accept', accept_file);
                 
-                // Logika label file karya
                 if (kategori === 'vidiografi') {
-                     labelFileKarya.innerHTML = 'Unggah File Karya <strong>Video</strong> (<strong class="hijau-teks">.mp4, dll.</strong>) <br><span class="hijau-teks">Wajib | Maks. 5MB</span>';
+                    labelFileKarya.innerHTML = 'Unggah File Karya <strong>Video</strong> (<strong class="hijau-teks">.mp4, dll.</strong>) <br><span class="keterangan-file">Wajib | Maks. 20MB</span>';
                 } else {
-                     labelFileKarya.innerHTML = 'Unggah File Karya <strong>Naskah</strong> (<strong class="hijau-teks">.docx</strong>) <br><span class="hijau-teks">Wajib | Maks. 5MB</span>';
+                    labelFileKarya.innerHTML = 'Unggah File Karya <strong>Naskah</strong> (<strong class="hijau-teks">.docx, .doc</strong>) <br><span class="keterangan-file">Wajib | Maks. 5MB</span>';
                 }
             }
 
             tampilkanModal(); 
         }
-        
-        function readFileAsBase64(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = () => resolve(reader.result);
-                reader.onerror = reject;
-                if (file) {
-                    reader.readAsDataURL(file);
-                } else {
-                    resolve(null);
-                }
-            });
-        }
 
-        function kirimPendaftaran(event) {
+        async function kirimPendaftaran(event) {
             event.preventDefault(); 
             const formElement = event.target;
             const kategori = formElement.kategori_terpilih.value;
             const submitButton = formElement.querySelector('button[type="submit"]');
             const status = document.getElementById('status-pendaftaran');
-
-            if (QUOTAS[kategori] <= 0) {
+            
+            if ((QUOTAS[kategori] || 0) <= 0) {
                  status.textContent = 'GAGAL: Kuota ' + kategori.toUpperCase() + ' sudah penuh.';
                  status.className = 'status error';
                  submitButton.disabled = false;
                  return;
             }
 
-            const fileKtsInput = formElement.id_card;
-            const fileBuktiInput = formElement.bukti_bayar;
-            const fileKaryaInput = document.getElementById('input-file-karya');
-            
-            const fileKts = fileKtsInput.files[0];
-            const fileBukti = fileBuktiInput.files[0];
+            const fileKts = formElement.id_card.files[0];
+            const fileBukti = formElement.bukti_bayar.files[0];
             
             const needsKaryaFile = kategori !== 'bacapuisi' && kategori !== 'dai_madura';
-            const fileKarya = (needsKaryaFile && fileKaryaInput.files.length > 0) ? fileKaryaInput.files[0] : null;
-            
-            status.textContent = 'Memproses pendaftaran dan mengkonversi file...';
+            const fileKarya = (needsKaryaFile && formElement['input-file-karya'].files.length > 0) 
+                             ? formElement['input-file-karya'].files[0] : null;
+
+            status.textContent = 'Memproses pendaftaran dan validasi file...';
             status.className = 'status warning';
             submitButton.disabled = true;
 
-            if (!fileKts) { status.textContent = 'GAGAL: Pilih Kartu Tanda Siswa (Wajib).'; status.className = 'status error'; submitButton.disabled = false; return; }
-            if (fileKts.size > MAX_SIZE_BASE64) {
-                 const sizeMB = (fileKts.size / 1048576).toFixed(2);
-                 status.textContent = `GAGAL: Ukuran KTS/ID Card (${sizeMB} MB) terlalu besar. Batas maksimal 5 MB.`;
-                 status.className = 'status error'; submitButton.disabled = false; return;
-            }
-            
-            if (!fileBukti) { status.textContent = 'GAGAL: Pilih Bukti Pembayaran (Wajib).'; status.className = 'status error'; submitButton.disabled = false; return; }
-            if (fileBukti.size > MAX_SIZE_BASE64) {
-                 const sizeMB = (fileBukti.size / 1048576).toFixed(2);
-                 status.textContent = `GAGAL: Ukuran Bukti Bayar (${sizeMB} MB) terlalu besar. Batas maksimal 5 MB.`;
-                 status.className = 'status error'; submitButton.disabled = false; return;
-            }
-
-            if (fileKarya) {
-                if (fileKarya.size > MAX_SIZE_BASE64) {
-                    const sizeMB = (fileKarya.size / 1048576).toFixed(2);
-                    status.textContent = `GAGAL: Ukuran File Karya ${kategori.toUpperCase()} (${sizeMB} MB) terlalu besar. Batas maksimal 5 MB.`;
-                    status.className = 'status error'; submitButton.disabled = false; return;
+            try {
+                if (!fileKts || fileKts.size > MAX_FILE_SIZE) {
+                     throw new Error('Pilih KTS/ID Card (Maks 5MB).');
                 }
-            }
-            
-            const promises = [readFileAsBase64(fileKts), readFileAsBase64(fileBukti)];
-            if (fileKarya) {
-                promises.push(readFileAsBase64(fileKarya));
-            }
+                if (!fileBukti || fileBukti.size > MAX_FILE_SIZE) { 
+                     throw new Error('Pilih Bukti Pembayaran (Maks 5MB).'); 
+                }
+                if (needsKaryaFile && (!fileKarya || fileKarya.size > MAX_FILE_SIZE)) {
+                    throw new Error('Pilih File Karya (Maks 5MB).');
+                }
+                
+                const randomUUID = crypto.randomUUID(); 
+                const folderPath = `${kategori.toLowerCase()}/${randomUUID}`; 
+                
+                let ktsPath = null;
+                let buktiBayarPath = null;
+                let karyaPath = null;
 
-            Promise.all(promises)
-            .then(base64Data => {
-                const dataPendaftaran = {
+                status.textContent = 'Mengunggah Kartu Tanda Siswa...';
+                const ktsFileName = `kts-${fileKts.name}`;
+                const { error: errorKts } = await supabaseClient.storage 
+                    .from(BUCKET_NAME)
+                    .upload(`${folderPath}/${ktsFileName}`, fileKts);
+                if (errorKts) throw new Error(`Gagal upload KTS: ${errorKts.message}. Cek RLS Storage Policy.`);
+                ktsPath = `${folderPath}/${ktsFileName}`;
+
+
+                status.textContent = 'Mengunggah Bukti Pembayaran...';
+                const buktiFileName = `bukti-${fileBukti.name}`;
+                const { error: errorBukti } = await supabaseClient.storage 
+                    .from(BUCKET_NAME)
+                    .upload(`${folderPath}/${buktiFileName}`, fileBukti);
+                if (errorBukti) throw new Error(`Gagal upload Bukti Bayar: ${errorBukti.message}. Cek RLS Storage Policy.`);
+                buktiBayarPath = `${folderPath}/${buktiFileName}`;
+
+                if (fileKarya) {
+                    status.textContent = 'Mengunggah File Karya...';
+                    const karyaFileName = `karya-${fileKarya.name}`;
+                    const { error: errorKarya } = await supabaseClient.storage 
+                        .from(BUCKET_NAME)
+                        .upload(`${folderPath}/${karyaFileName}`, fileKarya);
+                    if (errorKarya) throw new Error(`Gagal upload Karya: ${errorKarya.message}. Cek RLS Storage Policy.`);
+                    karyaPath = `${folderPath}/${karyaFileName}`;
+                }
+
+
+                status.textContent = 'Menyimpan data pendaftaran ke database...';
+
+                const dataInsert = {
                     nama: formElement.nama.value,
                     alamat: formElement.alamat.value,
-                    // satuan_pendidikan telah dihapus
                     tingkat_pendidikan: formElement.tingkat_pendidikan.value,
                     nomor_wa: formElement.nomor_wa.value,
                     kategori: kategori.toUpperCase(),
-                    timestamp: Date.now(),
-                    
-                    kartu_siswa: { 
-                        file_name: fileKts.name,
-                        file_size: fileKts.size,
-                        file_base64: base64Data[0]
-                    },
-                    bukti_pembayaran: { 
-                        file_name: fileBukti.name,
-                        file_size: fileBukti.size,
-                        file_base64: base64Data[1]
-                    },
-                    file_karya: fileKarya ? { 
-                        file_name: fileKarya.name,
-                        file_size: fileKarya.size,
-                        file_base64: base64Data[2]
-                    } : null
+                    kts_path: ktsPath,
+                    bukti_bayar_path: buktiBayarPath,
+                    karya_path: karyaPath, 
+                    timestamp: new Date().toISOString()
                 };
+                
+                const { error: errorDb } = await supabaseClient 
+                    .from(TABLE_NAME)
+                    .insert([dataInsert]);
 
-                rtdbRefSubmissions.push().set(dataPendaftaran)
-                .then(() => {
-                    QUOTAS[kategori]--; 
+                if (errorDb) throw new Error(`Gagal simpan data: ${errorDb.message}. Cek RLS Database Policy.`);
 
-                    status.className = 'status success';
-                    status.textContent = 'BERHASIL: Pendaftaran ' + kategori.toUpperCase() + ' Berhasil dikirim!';
-                    formElement.reset();
-                    
-                    const item = document.querySelector(`.kategori-item[data-kategori="${kategori}"]`);
-                    const acceptAttr = item ? item.getAttribute('data-accept') : 'none';
-                    
-                    tampilkanForm(kategori, acceptAttr); 
-                    updateQuotaDisplay(); 
-                })
-                .catch(error => {
-                    status.className = 'status error';
-                    status.textContent = 'GAGAL: Gagal menyimpan data pendaftaran ke RTDB: ' + error.message;
-                })
-                .finally(() => { submitButton.disabled = false; });
-            })
-            .catch(error => {
-                status.textContent = 'GAGAL: Error saat membaca file: ' + error.message; 
-                status.className = 'status error'; 
-                submitButton.disabled = false; 
-            });
+
+                QUOTAS[kategori]--; 
+
+                status.className = 'status success';
+                status.textContent = 'BERHASIL: Pendaftaran ' + kategori.toUpperCase() + ' berhasil dikirim!';
+                formElement.reset();
+                
+                const item = document.querySelector(`.kategori-item[data-kategori="${kategori}"]`);
+                const acceptAttr = item ? item.getAttribute('data-accept') : 'none';
+                
+                tampilkanForm(kategori, acceptAttr); 
+                updateQuotaDisplay(); 
+                
+            } catch (error) {
+                status.className = 'status error';
+                status.textContent = 'GAGAL: ' + error.message;
+            } finally {
+                submitButton.disabled = false;
+            }
         }
         
         document.addEventListener('DOMContentLoaded', function() {
             updateQuotaDisplay(); 
             startCountdown();
 
-            const panduanButtons = document.querySelectorAll('.tombol-panduan');
-            panduanButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const kategori = this.getAttribute('data-kategori');
-                    const url = JUKNIS_URLS[kategori];
-                    window.open(url, '_blank');
-                });
+            const daftarButtons = document.querySelectorAll('.tombol-daftar-kategori');
+            daftarButtons.forEach(button => {
+                const item = button.closest('.kategori-item');
+                if (item) {
+                    const kategori = item.getAttribute('data-kategori');
+                    const accept_file = item.getAttribute('data-accept');
+                    
+                    button.addEventListener('click', function() {
+                        tampilkanForm(kategori, accept_file);
+                    });
+                }
             });
         });
     </script>
