@@ -39,7 +39,6 @@
             padding-top: 0; 
         }
 
-        /* --- BANNER AREA MODIFIKASI --- */
         #banner-area {
             height: 500px; 
             background-image: url('https://i.pinimg.com/1200x/11/07/86/1107866f9472fb8beb6ea6cc8eb822c2.jpg');
@@ -332,16 +331,8 @@
             font-size: 0.8em;
             text-transform: uppercase;
             margin-right: auto;
-        }
-
-        .quota-badge.available {
             background-color: var(--color-status-success);
             color: var(--color-primary);
-        }
-
-        .quota-badge.full {
-            background-color: var(--color-status-error);
-            color: var(--color-urgent-warning);
         }
 
         .tombol-daftar-kategori {
@@ -654,7 +645,7 @@
                     <h3>Puisi</h3>
                     <p>Karya orisinal dalam bentuk puisi dengan tema bebas.</p>
                     <div class="tombol-area">
-                        <span id="status-puisi" class="quota-badge available">50 KUOTA</span>
+                        <span id="status-puisi" class="quota-badge">KUOTA 50</span>
                         <div>
                             <button class="tombol-daftar-kategori">Daftar Lomba</button>
                         </div>
@@ -665,7 +656,7 @@
                     <h3>Esai Ilmiah</h3>
                     <p>Menulis esai ilmiah yang mengangkat isu sosial atau teknologi.</p>
                     <div class="tombol-area">
-                        <span id="status-esai" class="quota-badge available">50 KUOTA</span>
+                        <span id="status-esai" class="quota-badge">KUOTA 50</span>
                         <div>
                             <button class="tombol-daftar-kategori">Daftar Lomba</button>
                         </div>
@@ -676,7 +667,7 @@
                     <h3>Cerpen</h3>
                     <p>Karya fiksi pendek dengan mengangkat tema lokal Madura.</p>
                     <div class="tombol-area">
-                        <span id="status-cerpen" class="quota-badge available">50 KUOTA</span>
+                        <span id="status-cerpen" class="quota-badge">KUOTA 50</span>
                         <div>
                             <button class="tombol-daftar-kategori">Daftar Lomba</button>
                         </div>
@@ -687,7 +678,7 @@
                     <h3>Vidiografi</h3>
                     <p>Lomba membuat konten video kreatif berdurasi pendek.</p>
                     <div class="tombol-area">
-                        <span id="status-vidiografi" class="quota-badge available">50 KUOTA</span>
+                        <span id="status-vidiografi" class="quota-badge">KUOTA 50</span>
                         <div>
                             <button class="tombol-daftar-kategori">Daftar Lomba</button>
                         </div>
@@ -698,7 +689,7 @@
                     <h3>Baca Puisi</h3>
                     <p>Penampilan pembacaan puisi yang akan dilaksanakan secara online.</p>
                     <div class="tombol-area">
-                        <span id="status-bacapuisi" class="quota-badge available">50 KUOTA</span>
+                        <span id="status-bacapuisi" class="quota-badge">KUOTA 50</span>
                         <div>
                             <button class="tombol-daftar-kategori">Daftar Lomba</button>
                         </div>
@@ -709,7 +700,7 @@
                     <h3>Da'i Madura</h3>
                     <p>Lomba pidato bertema keagamaan menggunakan Bahasa Madura.</p>
                     <div class="tombol-area">
-                        <span id="status-dai_madura" class="quota-badge available">50 KUOTA</span>
+                        <span id="status-dai_madura" class="quota-badge">KUOTA 50</span>
                         <div>
                             <button class="tombol-daftar-kategori">Daftar Lomba</button>
                         </div>
@@ -832,13 +823,29 @@
 
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
-        const MAX_FILE_SIZE = 20971520; 
-
-        var QUOTAS = {
-            'puisi': 50, 'esai': 50, 'cerpen': 50, 'vidiografi': 50, 
-            'bacapuisi': 50, 'dai_madura': 50 
-        };
+        const MAX_FILE_SIZE_5MB = 5 * 1024 * 1024;
+        const MAX_FILE_SIZE_20MB = 20 * 1024 * 1024; 
         
+        const PING_INTERVAL_MS = 30 * 60 * 1000; 
+
+        async function keepAlivePing() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('pendaftaran')
+                    .select('kategori')
+                    .limit(1);
+
+                if (error) {
+                    console.error('Ping ke Supabase gagal, koneksi mungkin lambat:', error.message);
+                } else {
+                    console.log('Ping ke Supabase berhasil. Database aktif.');
+                }
+            } catch (e) {
+                console.error('Error saat melakukan ping:', e);
+            }
+        }
+        
+
         function tampilkanModal() {
             document.getElementById('modal-pendaftaran').style.display = 'flex';
             document.body.classList.add('modal-open'); 
@@ -851,54 +858,22 @@
             document.body.classList.remove('modal-open'); 
         }
         
-        function updateQuotaDisplay() {
-            const detailItems = document.querySelectorAll('.kategori-item[data-kategori]');
-            detailItems.forEach(item => {
-                const kategori = item.getAttribute('data-kategori');
-                const kuota = QUOTAS[kategori];
-                const quotaBadge = item.querySelector(`#status-${kategori}`); 
-                const button = item.querySelector('.tombol-daftar-kategori');
-                
-                if (quotaBadge && button) {
-                    if (kuota <= 0) {
-                        quotaBadge.textContent = 'PENUH';
-                        quotaBadge.className = 'quota-badge full'; 
-                        button.disabled = true;
-                        button.textContent = 'Kuota Penuh';
-                        button.style.backgroundColor = '#6c757d';
-                    } else {
-                        quotaBadge.textContent = `${kuota} KUOTA`; 
-                        quotaBadge.className = 'quota-badge available'; 
-                        button.disabled = false;
-                        button.textContent = 'Daftar Lomba';
-                        button.style.backgroundColor = 'var(--color-primary)';
-                    }
-                }
-            });
-        }
-        
         function startCountdown() {
             const countdownArea = document.getElementById('countdown-area');
             countdownArea.style.display = 'none';
         }
         
         function tampilkanForm(kategori, accept_file) {
-            const kuotaSaatIni = QUOTAS[kategori]; 
             const formElement = document.getElementById('form-pendaftaran').querySelector('form');
             const submitButton = formElement.querySelector('button[type="submit"]');
 
-            if (kuotaSaatIni <= 0) {
-                alert('Mohon maaf, kuota untuk kategori ' + kategori.toUpperCase() + ' sudah penuh.');
-                tutupModal();
-                return;
-            }
-            
             submitButton.disabled = false;
             
             const judulForm = document.getElementById('judul-form');
             const fileKaryaGroup = document.getElementById('file-karya-group');
             const inputFileKarya = document.getElementById('input-file-karya');
             const labelFileKarya = document.getElementById('label-file-karya');
+            const keteranganFileKarya = fileKaryaGroup.querySelector('.keterangan-file');
             const kategoriTerpilih = document.getElementById('kategori_terpilih');
             const puisiDownloadSection = document.getElementById('puisi-download-section');
 
@@ -921,9 +896,11 @@
                 inputFileKarya.setAttribute('accept', accept_file);
                 
                 if (kategori === 'vidiografi') {
-                    labelFileKarya.innerHTML = 'Unggah File Karya <strong>Video</strong> (<strong class="hijau-teks">.mp4, dll.</strong>) <br><span class="keterangan-file">Wajib | Maks. 20MB</span>';
+                    labelFileKarya.innerHTML = 'Unggah File Karya <strong>Video</strong> (<strong class="hijau-teks">.mp4, dll.</strong>)';
+                    keteranganFileKarya.textContent = 'Wajib | Maks. 20 MB';
                 } else {
-                    labelFileKarya.innerHTML = 'Unggah File Karya <strong>Naskah</strong> (<strong class="hijau-teks">.docx, .doc</strong>) <br><span class="keterangan-file">Wajib | Maks. 5MB</span>';
+                    labelFileKarya.innerHTML = 'Unggah File Karya <strong>Naskah</strong> (<strong class="hijau-teks">.docx, .doc</strong>)';
+                    keteranganFileKarya.textContent = 'Wajib | Maks. 5 MB';
                 }
             }
 
@@ -937,13 +914,6 @@
             const submitButton = formElement.querySelector('button[type="submit"]');
             const status = document.getElementById('status-pendaftaran');
             
-            if ((QUOTAS[kategori] || 0) <= 0) {
-                 status.textContent = 'GAGAL: Kuota ' + kategori.toUpperCase() + ' sudah penuh.';
-                 status.className = 'status error';
-                 submitButton.disabled = false;
-                 return;
-            }
-
             const fileKts = formElement.id_card.files[0];
             const fileBukti = formElement.bukti_bayar.files[0];
             
@@ -956,14 +926,27 @@
             submitButton.disabled = true;
 
             try {
-                if (!fileKts || fileKts.size > MAX_FILE_SIZE) {
+                
+                if (!fileKts || fileKts.size > MAX_FILE_SIZE_5MB) {
                      throw new Error('Pilih KTS/ID Card (Maks 5MB).');
                 }
-                if (!fileBukti || fileBukti.size > MAX_FILE_SIZE) { 
+                
+                if (!fileBukti || fileBukti.size > MAX_FILE_SIZE_5MB) { 
                      throw new Error('Pilih Bukti Pembayaran (Maks 5MB).'); 
                 }
-                if (needsKaryaFile && (!fileKarya || fileKarya.size > MAX_FILE_SIZE)) {
-                    throw new Error('Pilih File Karya (Maks 5MB).');
+                
+                if (needsKaryaFile) {
+                    let batasUkuranKarya = MAX_FILE_SIZE_5MB;
+                    let batasKeterangan = '5MB';
+                    
+                    if (kategori === 'vidiografi') {
+                        batasUkuranKarya = MAX_FILE_SIZE_20MB;
+                        batasKeterangan = '20MB';
+                    }
+                    
+                    if (!fileKarya || fileKarya.size > batasUkuranKarya) {
+                        throw new Error(`Pilih File Karya (Maks ${batasKeterangan}).`);
+                    }
                 }
                 
                 const randomUUID = crypto.randomUUID(); 
@@ -1001,28 +984,27 @@
                 }
 
 
-                status.textContent = 'Menyimpan data pendaftaran ke database...';
+                status.textContent = 'Memeriksa kuota dan menyimpan data di server (server-side check)...';
 
-                const dataInsert = {
-                    nama: formElement.nama.value,
-                    alamat: formElement.alamat.value,
-                    tingkat_pendidikan: formElement.tingkat_pendidikan.value,
-                    nomor_wa: formElement.nomor_wa.value,
-                    kategori: kategori.toUpperCase(),
-                    kts_path: ktsPath,
-                    bukti_bayar_path: buktiBayarPath,
-                    karya_path: karyaPath, 
-                    timestamp: new Date().toISOString()
-                };
-                
-                const { error: errorDb } = await supabaseClient 
-                    .from(TABLE_NAME)
-                    .insert([dataInsert]);
+                const { error: errorRpc } = await supabaseClient.rpc('secure_register', {
+                    p_nama: formElement.nama.value,
+                    p_alamat: formElement.alamat.value,
+                    p_tingkat_pendidikan: formElement.tingkat_pendidikan.value,
+                    p_nomor_wa: formElement.nomor_wa.value,
+                    p_kategori: kategori.toUpperCase(), 
+                    p_kts_path: ktsPath,
+                    p_bukti_bayar_path: buktiBayarPath,
+                    p_karya_path: karyaPath 
+                });
 
-                if (errorDb) throw new Error(`Gagal simpan data: ${errorDb.message}. Cek RLS Database Policy.`);
+                if (errorRpc) {
+                    if (errorRpc.message && errorRpc.message.includes('Kuota pendaftaran')) {
+                         throw new Error(`GAGAL: ${errorRpc.message}`);
+                    } else {
+                         throw new Error(`Gagal simpan data: ${errorRpc.message}. Cek RLS Database Policy atau RPC Policy.`);
+                    }
+                }
 
-
-                QUOTAS[kategori]--; 
 
                 status.className = 'status success';
                 status.textContent = 'BERHASIL: Pendaftaran ' + kategori.toUpperCase() + ' berhasil dikirim!';
@@ -1032,19 +1014,21 @@
                 const acceptAttr = item ? item.getAttribute('data-accept') : 'none';
                 
                 tampilkanForm(kategori, acceptAttr); 
-                updateQuotaDisplay(); 
                 
             } catch (error) {
                 status.className = 'status error';
-                status.textContent = 'GAGAL: ' + error.message;
+                status.textContent = error.message;
             } finally {
                 submitButton.disabled = false;
             }
         }
         
         document.addEventListener('DOMContentLoaded', function() {
-            updateQuotaDisplay(); 
             startCountdown();
+
+            keepAlivePing(); 
+
+            setInterval(keepAlivePing, PING_INTERVAL_MS);
 
             const daftarButtons = document.querySelectorAll('.tombol-daftar-kategori');
             daftarButtons.forEach(button => {
